@@ -11,7 +11,7 @@ COPY . .
 RUN yarn build
 
 FROM joseluisq/static-web-server:latest as prod
-COPY --from=build /usr/src/app/dist /public
+COPY --from=build /usr/src/app/build /public
 COPY ./static-web-server.toml /config.toml
 ENV SERVER_CONFIG_FILE=/config.toml
 EXPOSE 80
