@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-gradient: linear-gradient(
+    100deg,
+    #009951 0.83%,
+    #0ea5ba 20.99%,
+    #7c47be 34.76%,
+    #ba2a92 50%,
+    #ff48cd 68.69%,
+    #f19edc 86.39%,
+    #fcf1fd 99.17%
+  );
+  --brand-overlay: rgba(0, 0, 0, 0.5);
+  --brand-gradient-size: 100%;
+  --brand-gradient-position: 50%;
+}
+
+@layer utilities {
+  .brand-gradient {
+    transition: background-size 2s, background-position 2s;
+    background: linear-gradient(
+        0deg,
+        var(--brand-overlay),
+        var(--brand-overlay)
+      ),
+      var(--brand-gradient);
+    background-size: cover, var(--brand-gradient-size);
+    background-position: center, var(--brand-gradient-position);
+    &.gradient-quick,
+    &.gradient-detailed,
+    &.gradient-comprehensive {
+      --brand-gradient-size: 300%;
+    }
+    &.transitioning-home {
+      transition: background-size 2s;
+    }
+    &.gradient-quick {
+      --brand-gradient-position: 0%;
+    }
+    &.gradient-detailed {
+      --brand-gradient-position: 50%;
+    }
+    &.gradient-comprehensive {
+      --brand-gradient-position: 100%;
+    }
+  }
+}

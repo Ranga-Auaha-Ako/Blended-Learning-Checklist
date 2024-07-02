@@ -1,1 +1,117 @@
-<slot></slot><script>import "../app.css";</script>
+<script lang="ts">
+  import "../app.postcss";
+  import { page } from "$app/stores";
+  import { onNavigate } from "$app/navigation";
+
+  const destinationGradient = {
+    quick: "gradient-quick" as const,
+    detailed: "gradient-detailed" as const,
+    comprehensive: "gradient-comprehensive" as const,
+    default: "" as const,
+  };
+
+  const getDestinationGradient = (route: string | null | undefined) => {
+    if (typeof route !== "string") return destinationGradient.default;
+    if (route?.startsWith("/quick")) return destinationGradient.quick;
+    if (route?.startsWith("/detailed")) return destinationGradient.detailed;
+    if (route?.startsWith("/comprehensive"))
+      return destinationGradient.comprehensive;
+    return destinationGradient.default;
+  };
+
+  onNavigate((navigation) => {
+    if (!document.startViewTransition) return;
+
+    return new Promise((resolve) => {
+      const bgGradient = document.getElementById("background-wrapper");
+      const targetGradient = getDestinationGradient(navigation.to?.route.id);
+      bgGradient?.classList.remove(
+        destinationGradient.quick,
+        destinationGradient.detailed,
+        destinationGradient.comprehensive
+      );
+      if (targetGradient) bgGradient?.classList.add(targetGradient);
+      // Handle case where transitioning between home and a page
+      if (!getDestinationGradient($page.route.id)) {
+        bgGradient?.classList.add("transitioning-home");
+      }
+      document.startViewTransition(async () => {
+        resolve();
+        await navigation.complete;
+        bgGradient?.classList.remove("transitioning-home");
+      });
+    });
+  });
+</script>
+
+<div
+  id="background-wrapper"
+  class:bg-home={getDestinationGradient($page.route.id) === ""}
+  class="brand-gradient {getDestinationGradient($page.route.id)}"
+></div>
+<div
+  class="background-overlay"
+  class:overlayShadow={!getDestinationGradient($page.route.id)}
+></div>
+<div class="content-wrapper">
+  <div
+    class="join absolute top-4 left-4 opacity-80"
+    style="--bc:100% 0 0; --b1: 10% 0 0 ;"
+  >
+    <a
+      href="/"
+      class:btn-active={$page.route.id === "/"}
+      class="btn btn-outline btn join-item">Home</a
+    >
+    <a
+      href="/comprehensive"
+      class:btn-active={$page.route.id === "/comprehensive"}
+      class="btn btn-outline btn join-item">Comprehensive</a
+    >
+    <a
+      href="/detailed"
+      class:btn-active={$page.route.id === "/detailed"}
+      class="btn btn-outline btn join-item">Detailed</a
+    >
+    <a
+      href="/quick"
+      class:btn-active={$page.route.id === "/quick"}
+      class="btn btn-outline btn join-item">Quick</a
+    >
+  </div>
+
+  <br />
+  <slot></slot>
+</div>
+
+<style lang="postcss">
+  ::view-transition-old(background),
+  ::view-transition-new(background) {
+    /* animation-delay: 0.3s; */
+    /* animation-duration: 1s; */
+  }
+  #background-wrapper {
+    @apply absolute inset-0 bg-gray-100 z-0;
+    view-transition-name: background;
+  }
+  .content-wrapper {
+    @apply relative z-20;
+    view-transition-name: content;
+  }
+  .background-overlay {
+    @apply absolute inset-0 z-10 transition ease-in-out pointer-events-none;
+    transition-duration: 2s;
+    background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.4) 44%,
+      rgba(0, 0, 0, 0.3) 54.5%,
+      rgba(0, 0, 0, 0.2) 90%
+    );
+    view-transition-name: overlay;
+    opacity: 0;
+    &.overlayShadow {
+      opacity: 1;
+    }
+  }
+</style>
