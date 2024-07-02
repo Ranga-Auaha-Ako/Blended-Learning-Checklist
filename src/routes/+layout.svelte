@@ -42,6 +42,24 @@
       });
     });
   });
+  $effect(() => {
+    if (getDestinationGradient($page.route.id) !== "") return;
+    const pointer = $page.data.previewMode;
+    const bgGradient = document.getElementById("background-wrapper");
+    bgGradient?.classList.remove(
+      destinationGradient.quick,
+      destinationGradient.detailed,
+      destinationGradient.comprehensive
+    );
+    if (
+      pointer &&
+      typeof pointer === "string" &&
+      pointer in destinationGradient
+    )
+      bgGradient?.classList.add(
+        destinationGradient[pointer as keyof typeof destinationGradient]
+      );
+  });
 </script>
 
 <div
@@ -80,7 +98,6 @@
     >
   </div>
 
-  <br />
   <slot></slot>
 </div>
 
