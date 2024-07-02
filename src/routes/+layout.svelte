@@ -55,10 +55,12 @@
       pointer &&
       typeof pointer === "string" &&
       pointer in destinationGradient
-    )
+    ) {
+      // add the appropriate gradient class
       bgGradient?.classList.add(
         destinationGradient[pointer as keyof typeof destinationGradient]
       );
+    }
   });
 </script>
 

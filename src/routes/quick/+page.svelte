@@ -11,10 +11,10 @@
             <a href="/quick" class="nav-link">Home</a>
           </li>
           <li class="nav-item">
-            <a href="/quick/detailed" class="nav-link">Detailed</a>
+            <a href="/detailed" class="nav-link">Detailed</a>
           </li>
           <li class="nav-item">
-            <a href="/quick/comprehensive" class="nav-link">Comprehensive</a>
+            <a href="/comprehensive" class="nav-link">Comprehensive</a>
           </li>
         </ul>
       </div>
