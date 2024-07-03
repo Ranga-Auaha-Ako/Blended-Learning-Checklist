@@ -37,7 +37,7 @@
   <div class="hero-content text-center">
     <div>
       <h1 class="text-6xl font-bold">Blended Learning Checklist</h1>
-      <p class="py-6 text-xl">To begin, pick how deep you’d like to explore</p>
+      <p class="py-6 text-xl">To begin, pick how you’d like to explore</p>
       <div class="modes flex flex-wrap justify-center gap-4">
         {#each modes as mode}
           <div

@@ -73,9 +73,9 @@
   class="background-overlay"
   class:overlayShadow={!getDestinationGradient($page.route.id)}
 ></div>
-<div class="content-wrapper">
+<div class="content-wrapper mt-14">
   <div
-    class="join absolute top-4 left-4 opacity-80"
+    class="join fixed top-4 left-4 opacity-80 z-0"
     style="--bc:100% 0 0; --b1: 10% 0 0 ;"
   >
     <a
@@ -110,7 +110,7 @@
     /* animation-duration: 1s; */
   }
   #background-wrapper {
-    @apply absolute inset-0 bg-gray-100 z-0;
+    @apply fixed inset-0 bg-gray-100 z-0;
     view-transition-name: background;
   }
   .content-wrapper {
@@ -118,7 +118,7 @@
     view-transition-name: content;
   }
   .background-overlay {
-    @apply absolute inset-0 z-10 transition ease-in-out pointer-events-none;
+    @apply fixed inset-0 z-10 transition ease-in-out pointer-events-none;
     transition-duration: 2s;
     background: linear-gradient(
       0deg,
