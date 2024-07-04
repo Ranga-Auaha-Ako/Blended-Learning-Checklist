@@ -75,7 +75,7 @@
 ></div>
 <div class="content-wrapper mt-14">
   <div
-    class="join fixed top-4 left-4 opacity-80 z-0"
+    class="join fixed top-4 left-4 opacity-40 z-0"
     style="--bc:100% 0 0; --b1: 10% 0 0 ;"
   >
     <a
