@@ -73,33 +73,7 @@
   class="background-overlay"
   class:overlayShadow={!getDestinationGradient($page.route.id)}
 ></div>
-<div class="content-wrapper mt-14">
-  <div
-    class="join fixed top-4 left-4 opacity-40 z-0"
-    style="--bc:100% 0 0; --b1: 10% 0 0 ;"
-  >
-    <a
-      href="/"
-      class:btn-active={$page.route.id === "/"}
-      class="btn btn-outline btn join-item">Home</a
-    >
-    <a
-      href="/comprehensive"
-      class:btn-active={$page.route.id === "/comprehensive"}
-      class="btn btn-outline btn join-item">Comprehensive</a
-    >
-    <a
-      href="/detailed"
-      class:btn-active={$page.route.id === "/detailed"}
-      class="btn btn-outline btn join-item">Detailed</a
-    >
-    <a
-      href="/quick"
-      class:btn-active={$page.route.id === "/quick"}
-      class="btn btn-outline btn join-item">Quick</a
-    >
-  </div>
-
+<div class="content-wrapper">
   <slot></slot>
 </div>
 
