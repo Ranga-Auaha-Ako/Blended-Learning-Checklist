@@ -1,17 +1,22 @@
 <script lang="ts">
   import checklist from "$lib/datasource/checklist";
   let activeList = $state(0);
+  import MdiArrowBack from "virtual:icons/mdi/arrowBack";
 </script>
 
-<div class="heading text-white mx-20 my-20 flex flex-col gap-4">
-  <h2 class="font-semibold text-6xl">Comprehensive Review</h2>
-  <p class="text-lg font-light">
+<div class="heading text-white mx-20 my-20 flex flex-col">
+  <a href="/" class="btn btn-ghost text-xl -ml-3.5 w-auto mr-auto">
+    <MdiArrowBack></MdiArrowBack>
+    Return to menu
+  </a>
+  <h2 class="font-semibold text-5xl">Comprehensive Review</h2>
+  <p class="text-lg font-light mb-4">
     Review the full list of TELAS benchmark standards to ensure the highest
     possible quality course.
   </p>
   <div>
     <progress
-      class="progress w-full h-5 [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:bg-white"
+      class="progress w-full h-4 mb-2 [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:bg-white"
       value={(activeList / checklist.standards.length) * 100}
       max="100"
     ></progress>
