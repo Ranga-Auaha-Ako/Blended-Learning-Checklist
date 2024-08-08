@@ -24,7 +24,8 @@
   );
 
   if (hideRated) {
-    current = cards.indexOf(cards.filter((c) => !c.rating)[current]);
+    let foundCurrent = cards.indexOf(cards.filter((c) => !c.rating)[current]);
+    if (foundCurrent !== -1) current = foundCurrent;
     console.log("Updated current", current);
   }
 
@@ -34,8 +35,6 @@
   };
 </script>
 
-{current}
-{filteredCurrent}
 <div class="stack mx-auto grid" bind:this={cardStackEl}>
   {#each cardStack.slice(filteredCurrent, filteredCurrent + 3) as card, i (card.title)}
     <Card
