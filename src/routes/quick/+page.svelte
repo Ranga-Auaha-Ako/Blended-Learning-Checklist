@@ -1,9 +1,14 @@
 <script lang="ts">
   import CardStack from "$lib/components/cardStack.svelte";
   import ResultsTable from "$lib/components/resultsTable.svelte";
+  import SidebarChecklist from "$lib/components/sidebarChecklist.svelte";
   import checklist from "$lib/datasource/checklist";
   import { appState, routeMode } from "$lib/state.svelte.ts";
   import { fade, fly } from "svelte/transition";
+  import MdiArrowBack from "virtual:icons/mdi/arrowBack";
+
+  let hideRated = $state(true);
+  let current = $state(0);
 
   let progress = $derived(Object.keys(appState.quick.progress).length);
 
@@ -14,14 +19,36 @@
   });
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-3 min-h-screen w-full gap-8 p-8">
+<div class="grid grid-cols-1 md:grid-cols-3 h-screen w-full gap-8 p-8">
   <!-- sidebar -->
-  <div class="col-span-1">
-    <div class="sidebar"></div>
+  <div class="col-span-1 text-white overflow-y-auto">
+    <div class="sidebar h-full flex flex-col gap-4">
+      <a href="/" class="btn btn-ghost text-xl -ml-3.5 w-auto mr-auto">
+        <MdiArrowBack></MdiArrowBack>
+        Return to menu
+      </a>
+      <h2 class="font-semibold text-5xl">Quick Review</h2>
+      <p class="text-lg font-light text-gray-100">
+        Quickly check your assumptions against an overview of what is expected
+        for learning at the University of Auckland.
+      </p>
+      <SidebarChecklist
+        items={checklist.standards.map((s) => ({
+          state: appState.quick.progress[s.name] !== undefined,
+          text: s.name,
+        }))}
+        select={(idx) => {
+          appState.quick.mode = routeMode.active;
+          current = idx;
+          hideRated = false;
+        }}
+        {current}
+      ></SidebarChecklist>
+    </div>
   </div>
 
   <div class="col-span-2">
-    <main class="rounded-box shadow-xl bg-base-100 w-full h-full py-14 px-14">
+    <main class="rounded-box shadow-xl bg-base-100 w-full h-full py-8 px-8">
       {#if appState.quick.mode === routeMode.intro}
         <div out:fade>
           <h2 class="font-bold text-4xl">Introduction</h2>
@@ -54,10 +81,11 @@
               cards={checklist.standards.map((s) => ({
                 title: s.name,
                 body: s.description || "",
-                rating: appState.quick.progress[s.name] || undefined,
+                rating: appState.quick.progress[s.name],
               }))}
+              {hideRated}
+              bind:current
               rate={(idx, rating) => {
-                console.log(idx, checklist.standards[idx], rating);
                 appState.quick.progress[checklist.standards[idx].name] = rating;
               }}
             />

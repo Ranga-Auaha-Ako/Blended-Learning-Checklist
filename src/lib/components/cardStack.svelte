@@ -18,19 +18,32 @@
     rate,
     hideRated = true,
   }: cardStackProps = $props();
-  let total = $derived(cards.length);
+  let cardStack = $derived(hideRated ? cards.filter((c) => !c.rating) : cards);
+  let filteredCurrent = $derived(
+    hideRated ? cardStack.indexOf(cards[current]) : current
+  );
+
+  if (hideRated) {
+    current = cards.indexOf(cards.filter((c) => !c.rating)[current]);
+    console.log("Updated current", current);
+  }
+
+  let cardStackEl: HTMLDivElement;
+  const nextCard = () => {
+    current = cards.indexOf(cardStack[filteredCurrent + 1]);
+  };
 </script>
 
-<div class="stack mx-auto grid">
-  {#each cards
-    .filter((c) => !hideRated || !c.rating)
-    .slice(current, current + 3) as card, i (card.title)}
+{current}
+{filteredCurrent}
+<div class="stack mx-auto grid" bind:this={cardStackEl}>
+  {#each cardStack.slice(filteredCurrent, filteredCurrent + 3) as card, i (card.title)}
     <Card
       {...card}
       active={i === 0}
       rate={(rating) => {
         if (rate) rate(cards.indexOf(card), rating);
-        if (!hideRated) current++;
+        nextCard();
       }}
     ></Card>
   {/each}
