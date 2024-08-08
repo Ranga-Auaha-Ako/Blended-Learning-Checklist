@@ -40,7 +40,7 @@
     <div class="idx">{idx || ""}</div>
     <div class="name">{item.name}</div>
     <div class="rating">
-      {rating ? ratingLabels[rating] : ""}
+      {rating !== undefined ? ratingLabels[rating] : ""}
     </div>
   </button>
   {#if !collapsed}
