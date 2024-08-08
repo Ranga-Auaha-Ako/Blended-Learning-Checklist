@@ -12,6 +12,19 @@
   }
 
   let { items, select, current }: checklistProps = $props();
+  let itemsEls: (HTMLLabelElement | undefined)[] = Array(items.length).fill(
+    undefined
+  );
+  $effect(() => {
+    current;
+    if (current !== undefined) {
+      itemsEls[current]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
+  });
 </script>
 
 <div class="checklist">
@@ -29,6 +42,7 @@
       class="checklist-item"
       class:item-unchecked={!item.state}
       class:active={idx === current}
+      bind:this={itemsEls[idx]}
     >
       <span class="text-[1.25rem] p-4">
         {#if item.state}
