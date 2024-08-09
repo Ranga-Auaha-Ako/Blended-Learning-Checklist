@@ -1,6 +1,7 @@
 // This file manages the central state of the application
 // import { browser } from "$app/environment";
 import { onMount } from "svelte";
+import checklist from "./datasource/checklist";
 
 export enum rating {
   no = 0,
@@ -70,5 +71,63 @@ $effect.root(() => {
     sessionStorage.setItem("blended-checklist", JSON.stringify(appState));
   });
 });
+
+// Calculate progress by taking the avereage of ratings for the level deeper
+// Abstract function
+type computedRating = {
+  calculated: boolean;
+  rating: number;
+};
+const calculateAverage = (
+  ratings: Record<string, rating>,
+  subratings: Record<string, computedRating>,
+  items: { name: string; subItems: { name: string }[] }[]
+) => {
+  const calculated = items.map<[string, computedRating]>((item) => {
+    if (ratings[item.name]) {
+      return [item.name, { calculated: false, rating: ratings[item.name] }];
+    }
+    const subRatingAvg =
+      item.subItems
+        .map((subItem) => {
+          const subRating = subratings[subItem.name]?.rating || rating.no;
+          return subRating;
+        })
+        .reduce((a, b) => a + b, 0) / item.subItems.length;
+    return [item.name, { calculated: true, rating: subRatingAvg }];
+  });
+  return Object.fromEntries(calculated);
+};
+// Detailed
+export const detailedCalculatedAvg = () => {
+  const originRatings = Object.entries(appState.comprehensive.progress).map(
+    ([key, value]) => {
+      return [key, { calculated: false, rating: value }];
+    }
+  );
+  const items = checklist.standards.flatMap((standard) => {
+    return standard.criteria.map((c) => ({
+      name: c.name,
+      subItems: c.indicators,
+    }));
+  });
+  return calculateAverage(
+    appState.detailed.progress,
+    Object.fromEntries(originRatings),
+    items
+  );
+};
+
+export const quickCalculatedAvg = () => {
+  const items = checklist.standards.map((s) => ({
+    name: s.name,
+    subItems: s.criteria,
+  }));
+  return calculateAverage(
+    appState.quick.progress,
+    detailedCalculatedAvg(),
+    items
+  );
+};
 
 export { appState };

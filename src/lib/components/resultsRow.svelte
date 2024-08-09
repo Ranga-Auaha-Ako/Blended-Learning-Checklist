@@ -32,7 +32,7 @@
 
 <div class:expanded={!collapsed}>
   <button
-    class="row text-left w-full hover:bg-base-200 transition"
+    class="row text-left w-full bg-black bg-opacity-0 hover:bg-opacity-5 transition"
     onclick={() => {
       collapsed = !collapsed;
     }}
