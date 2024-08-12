@@ -17,7 +17,7 @@
 
   let { level }: resultsTableProps = $props();
 
-  let calcAvg = $derived.by(quickCalculatedAvg);
+  let calcAvg = $derived.by(quickCalculatedAvg.bind(undefined, true));
 
   const sortedStandards = $derived(
     checklist.standards

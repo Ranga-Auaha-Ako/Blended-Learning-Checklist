@@ -81,14 +81,14 @@ type computedRating = {
   rating: number;
 };
 const calculateAverage = (
-  _ratings: Record<string, rating | undefined>,
+  ratings: Record<string, rating | undefined>,
   subratings: Record<string, computedRating>,
   items: { name: string; subItems: { name: string }[] }[]
 ) => {
   const calculated = items.map<[string, computedRating]>((item) => {
-    // if (ratings[item.name]) {
-    //   return [item.name, { calculated: false, rating: ratings[item.name] }];
-    // }
+    if (ratings[item.name]) {
+      return [item.name, { calculated: false, rating: ratings[item.name] }];
+    }
     const subRatingAvg =
       item.subItems
         .map((subItem) => {
@@ -101,7 +101,7 @@ const calculateAverage = (
   return Object.fromEntries(calculated);
 };
 // Detailed
-export const detailedCalculatedAvg = () => {
+export const detailedCalculatedAvg = (useExisting = false) => {
   const originRatings = Object.entries(appState.comprehensive.progress).map(
     ([key, value]) => {
       return [key, { calculated: false, rating: value }];
@@ -114,19 +114,19 @@ export const detailedCalculatedAvg = () => {
     }));
   });
   return calculateAverage(
-    appState.detailed.progress,
+    useExisting ? appState.detailed.progress : {},
     Object.fromEntries(originRatings),
     items
   );
 };
 
-export const quickCalculatedAvg = () => {
+export const quickCalculatedAvg = (useExisting = false) => {
   const items = checklist.standards.map((s) => ({
     name: s.name,
     subItems: s.criteria,
   }));
   return calculateAverage(
-    appState.quick.progress,
+    useExisting ? appState.quick.progress : {},
     detailedCalculatedAvg(),
     items
   );
