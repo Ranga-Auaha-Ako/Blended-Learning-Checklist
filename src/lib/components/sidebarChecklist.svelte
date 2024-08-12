@@ -1,6 +1,7 @@
 <script lang="ts">
   import MDICheck from "virtual:icons/mdi/check";
   import MDICheckBoxOutlineBlank from "virtual:icons/mdi/checkBoxOutlineBlank";
+  import Checkbox from "./checkbox.svelte";
 
   interface checklistProps {
     items: {
@@ -9,25 +10,33 @@
     }[];
     select: (idx: number) => void;
     current?: number;
+    mask?: boolean;
+    autoScroll?: boolean;
   }
 
-  let { items, select, current }: checklistProps = $props();
+  let {
+    items,
+    select,
+    current,
+    mask = true,
+    autoScroll = true,
+  }: checklistProps = $props();
   let itemsEls: (HTMLLabelElement | undefined)[] = Array(items.length).fill(
     undefined
   );
   $effect(() => {
     current;
-    if (current !== undefined) {
+    if (current !== undefined && autoScroll) {
       itemsEls[current]?.scrollIntoView({
         behavior: "smooth",
-        block: "center",
-        inline: "center",
+        block: "nearest",
+        inline: "nearest",
       });
     }
   });
 </script>
 
-<div class="checklist">
+<div class="checklist" class:mask>
   {#each items as item, idx}
     <input
       type="radio"
@@ -45,11 +54,7 @@
       bind:this={itemsEls[idx]}
     >
       <span class="text-[1.25rem] p-4">
-        {#if item.state}
-          <MDICheck></MDICheck>
-        {:else}
-          <MDICheckBoxOutlineBlank></MDICheckBoxOutlineBlank>
-        {/if}
+        <Checkbox checked={item.state}></Checkbox>
       </span>
       <span class="p-4">
         {item.text}
@@ -60,19 +65,22 @@
 
 <style lang="postcss">
   .checklist {
-    @apply flex flex-col grow overflow-y-auto;
+    @apply flex flex-col grow overflow-y-auto snap-y snap-mandatory scroll-smooth;
     /* Padding to avoid cards being cut off by mask */
-    @apply pt-4 pb-28;
-    mask-image: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 1) 1rem,
-      rgba(0, 0, 0, 1) 70%,
-      rgba(0, 0, 0, 0)
-    );
+    &.mask {
+      @apply pt-4 pb-28 scroll-p-20;
+      mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 1) 1rem,
+        rgba(0, 0, 0, 1) 70%,
+        rgba(0, 0, 0, 0)
+      );
+    }
   }
   .checklist-item {
     @apply font-light text-left flex flex-row items-center rounded-lg transition cursor-pointer bg-white bg-opacity-0;
+    @apply snap-start;
     @apply outline outline-transparent -outline-offset-1;
 
     &.item-unchecked {

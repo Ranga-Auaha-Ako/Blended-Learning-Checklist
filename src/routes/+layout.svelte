@@ -2,6 +2,7 @@
   import "../app.postcss";
   import { page } from "$app/stores";
   import { onNavigate } from "$app/navigation";
+  import { indexState } from "$lib/state.svelte";
 
   const destinationGradient = {
     quick: "gradient-quick" as const,
@@ -44,7 +45,7 @@
   });
   $effect(() => {
     if (getDestinationGradient($page.route.id) !== "") return;
-    const pointer = $page.data.previewMode;
+    const pointer = indexState.mode;
     const bgGradient = document.getElementById("background-wrapper");
     bgGradient?.classList.remove(
       destinationGradient.quick,

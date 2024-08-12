@@ -4,19 +4,21 @@
     current?: number;
     rate: (idx: number, rating: rating) => void;
     hideRated?: boolean;
+    binaryMode?: boolean;
   }
-  import autoAnimate from "@formkit/auto-animate";
 </script>
 
 <script lang="ts">
   import type { cardProps } from "./card.svelte";
   import Card from "./card.svelte";
-  import type { rating } from "$lib/state.svelte";
+  import { appState, rating, ratingList } from "$lib/state.svelte";
+  import { tick } from "svelte";
   let {
     cards,
     current = $bindable(0),
     rate,
     hideRated = true,
+    binaryMode = false,
   }: cardStackProps = $props();
   let cardStack = $derived(hideRated ? cards.filter((c) => !c.rating) : cards);
   let filteredCurrent = $derived(
@@ -30,10 +32,37 @@
   }
 
   let cardStackEl: HTMLDivElement;
-  const nextCard = () => {
-    current = cards.indexOf(cardStack[filteredCurrent + 1]);
+  const nextCard = async (focus = false) => {
+    let foundCurrent = cards.indexOf(cardStack[filteredCurrent + 1]);
+    if (foundCurrent === -1) return;
+    current = foundCurrent;
+    if (focus) {
+      await tick();
+      const foundInput = cardStackEl.querySelector<HTMLInputElement>(
+        ".card-outer:not([inert]) input"
+      );
+      foundInput?.focus();
+    }
   };
+
+  const ratingItems = $derived(
+    binaryMode ? [rating.no, rating.maybe, rating.yes] : ratingList
+  );
+  const ratingShortcuts = $derived(
+    binaryMode ? ["1", "2", "3"] : ratingList.map((r) => (r + 1).toString())
+  );
 </script>
+
+<svelte:window
+  onkeypress={(e) => {
+    // There is an accessible keypress capture in the ratingButtons component
+    if (ratingShortcuts.includes(e.key)) {
+      const currentRating = ratingItems[ratingShortcuts.indexOf(e.key)];
+      rate && rate(filteredCurrent, currentRating);
+      nextCard();
+    }
+  }}
+/>
 
 <div class="stack mx-auto grid" bind:this={cardStackEl}>
   {#each cardStack.slice(filteredCurrent, filteredCurrent + 3) as card, i (card.title)}
@@ -44,6 +73,7 @@
         if (rate) rate(cards.indexOf(card), rating);
         nextCard();
       }}
+      {binaryMode}
     ></Card>
   {/each}
 </div>

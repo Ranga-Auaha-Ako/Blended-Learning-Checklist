@@ -4,14 +4,15 @@
     levelItemMap,
     levelItemMapReverse,
   } from "$lib/datasource/checklist";
-  import { appState, ratingLabels } from "$lib/state.svelte";
+  import { appState, rating, ratingLabels } from "$lib/state.svelte";
   import { slide } from "svelte/transition";
   interface rowProps {
     idx?: number;
     item: checklistItem;
     level: keyof typeof appState;
+    hideIndex?: boolean;
   }
-  let { idx, item, level }: rowProps = $props();
+  let { idx, item, level, hideIndex }: rowProps = $props();
 
   const shouldShowLevel = (rowLevel: keyof typeof appState) => {
     const levels = ["quick", "detailed", "comprehensive"] as const;
@@ -24,40 +25,59 @@
 
   const rowLevel = levelItemMapReverse[item.type];
 
-  const rating =
-    rowLevel === level ? appState[rowLevel].progress[item.name] : null;
+  const currentRating =
+    rowLevel === level ? appState[rowLevel].progress[item.name] : undefined;
 
   let collapsed = $state(!shouldShowLevel(itemLevel(item)));
 </script>
 
-<div class:expanded={!collapsed}>
+<div
+  class:expanded={!collapsed}
+  class:red={currentRating === rating.no}
+  class:orange={currentRating === rating.nobut}
+  class:yellow={currentRating === rating.yesbut}
+  class:green={currentRating === rating.yes}
+  class:hideIndex
+>
   <button
     class="row text-left w-full bg-black bg-opacity-0 hover:bg-opacity-5 transition"
     onclick={() => {
       collapsed = !collapsed;
     }}
   >
-    <div class="idx">{idx || ""}</div>
+    {#if !hideIndex}
+      <div class="idx" title={idx ? `Standard ${idx}` : undefined}>
+        {idx ? `${idx}.0` : ""}
+      </div>
+    {/if}
     <div class="name">{item.name}</div>
     <div class="rating">
-      {rating !== undefined ? ratingLabels[rating] : ""}
+      {currentRating !== undefined ? ratingLabels[currentRating] : ""}
     </div>
   </button>
   {#if !collapsed}
     <div transition:slide>
       {#if item.description}
         <div class="row !py-0">
-          <div class="name !col-start-2 text-xs italic">{item.description}</div>
+          <div class="name text-xs italic" class:!col-start-2={!hideIndex}>
+            {item.description}
+          </div>
         </div>
       {/if}
-      {#if item.type === "standard"}
-        {#each item.criteria as criterion}
-          <svelte:self item={criterion} {level} />
-        {/each}
-      {:else if item.type === "criteria"}
-        {#each item.indicators as indicator}
-          <svelte:self item={indicator} {level} />
-        {/each}
+      {#if item.type !== "indicator"}
+        <div class="sub-rows">
+          {#if item.type === "standard"}
+            <h3 class="sub-title">Criteria</h3>
+            {#each item.criteria as criterion}
+              <svelte:self item={criterion} {level} hideIndex={true} />
+            {/each}
+          {:else if item.type === "criteria"}
+            <h5 class="sub-title">Indicator</h5>
+            {#each item.indicators as indicator}
+              <svelte:self item={indicator} {level} hideIndex={true} />
+            {/each}
+          {/if}
+        </div>
       {/if}
     </div>
   {/if}
@@ -67,7 +87,7 @@
   .row {
     @apply grid grid-cols-12 gap-2 px-8 py-4;
     .idx {
-      @apply col-span-1;
+      @apply col-span-1 font-mono;
     }
     .name {
       @apply col-span-10;
@@ -85,5 +105,58 @@
     &:first-child {
       @apply border-t-0;
     }
+  }
+  .sub-rows {
+    @apply bg-white bg-opacity-50 rounded-lg my-4 overflow-clip border-inherit border;
+    /* Custom padding to match the parent row */
+    margin-left: calc(2rem + (100% - 4rem) * 0.08333);
+    margin-right: 0.5rem;
+    .sub-title {
+      @apply font-semibold pl-4 pt-2 text-gray-500;
+    }
+  }
+
+  .hideIndex {
+    .row {
+      @apply grid-cols-11;
+    }
+    .sub-rows {
+      @apply ml-4;
+    }
+  }
+  .red {
+    .sub-rows {
+      @apply border-red-200;
+      .sub-title {
+        @apply text-red-700;
+      }
+    }
+  }
+  .orange {
+    .sub-rows {
+      @apply border-orange-200;
+      .sub-title {
+        @apply text-orange-700;
+      }
+    }
+  }
+  .yellow {
+    .sub-rows {
+      @apply border-yellow-200;
+      .sub-title {
+        @apply text-yellow-700;
+      }
+    }
+  }
+  .green {
+    .sub-rows {
+      @apply border-green-200;
+      .sub-title {
+        @apply text-green-700;
+      }
+    }
+  }
+  :global(.sub-rows) .sub-rows {
+    @apply bg-opacity-100 bg-white;
   }
 </style>

@@ -1,18 +1,18 @@
 <script lang="ts" context="module">
   import { rating, ratingLabels, ratingList } from "$lib/state.svelte";
-  import StarIcon from "virtual:icons/material-symbols/star-rate-outline-rounded";
-  import StarIconFilled from "virtual:icons/material-symbols/star-rate-rounded";
   export interface cardProps {
     title: string;
     body: string;
     active?: boolean;
     rating?: rating;
     rate?: (rating: rating) => void;
+    binaryMode?: boolean;
   }
 </script>
 
 <script lang="ts">
-  import { fade, fly } from "svelte/transition";
+  import { fly } from "svelte/transition";
+  import RatingButtons from "./ratingButtons.svelte";
 
   let {
     title,
@@ -20,6 +20,7 @@
     rate,
     active = true,
     rating: cardRating,
+    binaryMode = false,
   }: cardProps = $props();
 </script>
 
@@ -34,42 +35,20 @@
     <h2 class="card-title text-base">
       {title}
     </h2>
-    <p class="text-sm basis-0 shrink overflow-y-auto">
+    <p class="text-xs basis-0 shrink overflow-y-auto">
       {body}
     </p>
     <div
-      class="card-actions bg-white border-t border-t-gray-300 grid grid-flow-col gap-0 -mx-8 -mb-8 overflow-clip"
+      class="card-actions bg-white border-t border-t-gray-300 -mx-8 -mb-8 overflow-clip"
     >
-      {#each ratingList as rateitem}
-        <!-- Pointer down event to speed up selection system -->
-        <label
-          class="rating-button"
-          class:rating-active={rateitem === cardRating}
-          onpointerdown={() => rate && rate(rateitem)}
-        >
-          <input
-            class="absolute opacity-0 focus-visible:opacity-100 translate-y-1 scale-125"
-            type="radio"
-            value={rateitem}
-            bind:group={cardRating}
-            onkeypress={(e) => {
-              if (e.key === "Enter" && rate) {
-                rate(rateitem);
-              }
-            }}
-          />
-          <div class="w-5 h-5">
-            {#if rateitem === cardRating}
-              <StarIconFilled />
-            {:else}
-              <StarIcon />
-            {/if}
-          </div>
-          <span class="text-xs">
-            {ratingLabels[rateitem]}
-          </span>
-        </label>
-      {/each}
+      <RatingButtons
+        {rate}
+        currentRating={cardRating}
+        fullWidth={true}
+        disabled={!active}
+        hintNumbers={true}
+        {binaryMode}
+      />
     </div>
   </div>
 </div>
@@ -77,21 +56,9 @@
 <style lang="postcss">
   .card-outer {
     @apply card overflow-clip border border-gray-300 bg-base-200 max-w-sm text-base-content max-h-screen transition max-w-xs;
-    aspect-ratio: 2/3.1;
+    aspect-ratio: 2/2.75;
     &.card-active {
       @apply opacity-100;
-    }
-  }
-  .rating-button {
-    @apply flex flex-col items-center hover:bg-gray-100 p-2 transition hover:scale-105 active:scale-100;
-    &:first-child {
-      @apply pl-0;
-    }
-    &:last-child {
-      @apply pr-0;
-    }
-    &.rating-active {
-      @apply bg-gray-100;
     }
   }
   label:has(input:focus-visible) {

@@ -35,8 +35,10 @@
   );
 
   const splitByRating = $derived(
-    ratingList.map((rating) => {
-      return sortedStandards.filter((s) => calcAvg[s.name]?.rating === rating);
+    [...ratingList, rating.maybe].map((rating) => {
+      return sortedStandards.filter(
+        (s) => Math.round(calcAvg[s.name]?.rating) === rating
+      );
     })
   );
 </script>
@@ -45,6 +47,15 @@
   {#each splitByRating as items, i}
     {#if items.length > 0}
       {@const rating = ratingList[i]}
+      <h2 class="tableTitle">
+        {#if rating === 0}Not met
+        {:else if rating === 1}Not met but
+        {:else if rating === 2}Met but
+        {:else if rating === 3}Met
+        {:else}Maybe
+        {/if}
+        ({items.length})
+      </h2>
       <div class="resultsTable rating-{rating}">
         <div class="table-head">
           <div class="idx">#</div>
@@ -84,6 +95,9 @@
         @apply bg-green-50 border-green-200 border-2;
       }
     }
+  }
+  .tableTitle {
+    @apply text-lg font-semibold mt-3;
   }
   .resultsTable {
     @apply bg-base-100 rounded-box overflow-clip shadow w-full h-full text-sm;

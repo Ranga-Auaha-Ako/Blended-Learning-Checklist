@@ -23,6 +23,7 @@
     "autoprefixer": "^10.4.19",
     "browserslist-to-esbuild": "^2.1.1",
     "daisyui": "^4.12.10",
+    "nanoid": "^5.0.7",
     "postcss": "^8.4.39",
     "postcss-nesting": "^12.1.5",
     "svelte": "^5.0.0-next.169",

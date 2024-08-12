@@ -8,6 +8,7 @@ export enum rating {
   nobut = 1,
   yesbut = 2,
   yes = 3,
+  maybe = -1,
 }
 
 export const ratingList = [rating.no, rating.nobut, rating.yesbut, rating.yes];
@@ -17,9 +18,10 @@ export const ratingLabels: Record<rating, string> = {
   [rating.nobut]: "No, but",
   [rating.yesbut]: "Yes, but",
   [rating.yes]: "Yes",
+  [rating.maybe]: "Maybe",
 };
 
-export type routeProgress = Record<string, rating>;
+export type routeProgress = Record<string, rating | undefined>;
 
 export enum routeMode {
   intro,
@@ -39,7 +41,7 @@ const defaultAppState: {
 } = {
   comprehensive: {
     progress: {} as routeProgress,
-    mode: routeMode.intro,
+    mode: routeMode.active,
   },
   detailed: {
     progress: {} as routeProgress,
@@ -79,14 +81,14 @@ type computedRating = {
   rating: number;
 };
 const calculateAverage = (
-  ratings: Record<string, rating>,
+  _ratings: Record<string, rating | undefined>,
   subratings: Record<string, computedRating>,
   items: { name: string; subItems: { name: string }[] }[]
 ) => {
   const calculated = items.map<[string, computedRating]>((item) => {
-    if (ratings[item.name]) {
-      return [item.name, { calculated: false, rating: ratings[item.name] }];
-    }
+    // if (ratings[item.name]) {
+    //   return [item.name, { calculated: false, rating: ratings[item.name] }];
+    // }
     const subRatingAvg =
       item.subItems
         .map((subItem) => {
@@ -129,5 +131,11 @@ export const quickCalculatedAvg = () => {
     items
   );
 };
+
+export let indexState: {
+  mode: keyof typeof appState | "reset";
+} = $state({
+  mode: "reset",
+});
 
 export { appState };

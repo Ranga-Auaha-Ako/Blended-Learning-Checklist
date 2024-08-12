@@ -1,122 +1,17 @@
 <script lang="ts">
-  import CardStack from "$lib/components/cardStack.svelte";
-  import ResultsTable from "$lib/components/resultsTable.svelte";
-  import SidebarChecklist from "$lib/components/sidebarChecklist.svelte";
-  import checklist from "$lib/datasource/checklist";
-  import { appState, routeMode } from "$lib/state.svelte.ts";
-  import { fade, fly } from "svelte/transition";
-  import MdiArrowBack from "virtual:icons/mdi/arrowBack";
-
-  let hideRated = $state(true);
-  let current = $state(0);
-
-  let progress = $derived(Object.keys(appState.quick.progress).length);
-
-  $effect(() => {
-    if (progress === checklist.standards.length) {
-      appState.quick.mode = routeMode.complete;
-    }
-  });
+  import CardPage from "$lib/components/cardPage.svelte";
+  import { routeMode } from "$lib/state.svelte";
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-3 h-screen w-full gap-8 p-8">
-  <!-- sidebar -->
-  <div class="col-span-1 text-white overflow-y-auto">
-    <div class="sidebar h-full flex flex-col gap-4">
-      <a href="/" class="btn btn-ghost text-xl -ml-3.5 w-auto mr-auto">
-        <MdiArrowBack></MdiArrowBack>
-        Return to menu
-      </a>
-      <h2 class="font-semibold text-5xl">Quick Review</h2>
-      <p class="text-lg font-light text-gray-100">
-        Quickly check your assumptions against an overview of what is expected
-        for learning at the University of Auckland.
-      </p>
-      <SidebarChecklist
-        items={checklist.standards.map((s) => ({
-          state: appState.quick.progress[s.name] !== undefined,
-          text: s.name,
-        }))}
-        select={(idx) => {
-          appState.quick.mode = routeMode.active;
-          current = idx;
-          hideRated = false;
-        }}
-        {current}
-      ></SidebarChecklist>
-    </div>
-  </div>
-
-  <div class="col-span-2">
-    <main class="rounded-box shadow-xl bg-base-100 w-full h-full py-8 px-8">
-      {#if appState.quick.mode === routeMode.intro}
-        <div out:fade>
-          <h2 class="font-bold text-4xl">Introduction</h2>
-          <p class="text-lg">
-            The Quick review tool will give you a broad overview of where you
-            might need to focus to improve your course. Text going here should
-            explain more about the tool and have good word usage to make word
-            look good here. When you’re ready to get started, click Get Started.
-          </p>
-
-          <button
-            class="btn btn-primary mt-8 block mx-auto"
-            onclick={() => (appState.quick.mode = routeMode.active)}
-          >
-            Get Started
-          </button>
-        </div>
-      {:else if appState.quick.mode === routeMode.active}
-        <div in:fly={{ delay: 150, y: 50 }}>
-          <progress
-            class="progress w-full h-2 -mt-2 mb-2"
-            value={progress}
-            max={checklist.standards.length}
-          ></progress>
-          <p class="text-lg font-light">
-            {progress} Completed
-          </p>
-          <div class="w-full">
-            <CardStack
-              cards={checklist.standards.map((s) => ({
-                title: s.name,
-                body: s.description || "",
-                rating: appState.quick.progress[s.name],
-              }))}
-              {hideRated}
-              bind:current
-              rate={(idx, rating) => {
-                appState.quick.progress[checklist.standards[idx].name] = rating;
-              }}
-            />
-          </div>
-        </div>
-      {:else if appState.quick.mode === routeMode.complete}
-        <div out:fade>
-          <button
-            class="btn btn-primary mt-8 float-right"
-            onclick={() => {
-              appState.quick.mode = routeMode.intro;
-              appState.quick.progress = {};
-            }}
-          >
-            Start Over
-          </button>
-          <h2 class="font-bold text-4xl">You're Done!</h2>
-          <p>
-            You have completed the quick review tool. You can now view your
-            results and see where you might need to focus to improve your
-            course.
-          </p>
-          <ResultsTable level="quick" />
-        </div>
-      {/if}
-    </main>
-  </div>
-</div>
-
-<style lang="postcss">
-  main {
-    view-transition-name: quick;
-  }
-</style>
+<CardPage
+  text={{
+    title: "Quick Review",
+    sidebar:
+      "Quickly check your assumptions against an overview of what is expected for learning at the University of Auckland.",
+    [routeMode.intro]:
+      "The Quick review tool will give you a broad overview of where you might need to focus to improve your course. Text going here should explain more about the tool and have good word usage to make word look good here. When you’re ready to get started, click Get Started.",
+    [routeMode.complete]:
+      "You have completed the quick review tool. You can now view your results and see where you might need to focus to improve your course.",
+  }}
+  mode="quick"
+/>

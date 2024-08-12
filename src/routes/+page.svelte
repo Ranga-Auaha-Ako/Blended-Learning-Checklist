@@ -1,11 +1,15 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import { appState, indexState } from "$lib/state.svelte";
   import MdiSchedule from "virtual:icons/mdi/schedule";
 
-  /** @type {import('./$types').PageData} */
-  export let data;
-
-  const modes = [
+  const modes: {
+    id: keyof typeof appState;
+    title: string;
+    description: string;
+    link: string;
+    time: number;
+  }[] = [
     {
       title: "Quick Review",
       description:
@@ -34,29 +38,39 @@
 </script>
 
 <div class="hero min-h-screen text-white">
-  <div class="hero-content text-center">
+  <div class="hero-content text-center px-4 mb-8">
     <div>
-      <h1 class="text-6xl font-bold">Blended Learning Checklist</h1>
-      <p class="py-6 text-xl">To begin, pick how you’d like to explore</p>
+      <div class="my-8">
+        <h1 class="text-6xl font-bold">Blended Learning Checklist</h1>
+        <p class="py-6 text-lg max-w-prose mx-auto font-light">
+          To begin, pick how you’d like to explore. Each mode will guide you
+          through a different level of detail, from a quick overview to a
+          comprehensive review. <span class="font-bold"
+            >If you’re not sure where to start, we recommend the Quick Review.</span
+          >
+        </p>
+      </div>
       <div class="modes flex flex-wrap justify-center gap-4">
         {#each modes as mode}
           <div
-            class="card bg-base-100 text-base-content text-left w-96 shadow-xl"
+            class="card bg-base-100 text-base-content text-left w-96 shadow-xl card-compact p-2"
             style:view-transition-name={mode.id}
             on:pointerover={() => {
-              data.previewMode = mode.id;
+              indexState.mode = mode.id;
             }}
             on:pointerleave={() => {
-              data.previewMode = "reset";
+              indexState.mode = "reset";
             }}
           >
             <div class="card-body">
               <h2 class="card-title">{mode.title}</h2>
               <p class="text-sm">{mode.description}</p>
               <div class="card-actions justify-between mt-2">
-                <a href={mode.link} class="btn btn-primary">Get Started</a>
+                <a href={mode.link} class="btn btn-primary btn-sm"
+                  >Get Started</a
+                >
                 <div
-                  class="inline-flex h-12 items-center font-semibold gap-2 text-sm"
+                  class="inline-flex h-8 items-center font-semibold gap-2 text-sm"
                 >
                   <MdiSchedule />
                   <span>
