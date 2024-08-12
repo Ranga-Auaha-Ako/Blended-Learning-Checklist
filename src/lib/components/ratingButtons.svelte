@@ -113,7 +113,7 @@ class="w-full grid grid-flow-col gap-0 h-full rating-row"
       @apply relative w-5 h-5;
     }
     .numberHint {
-      @apply bg-gray-200 font-mono w-4 h-4 inline-flex items-center justify-center rounded-sm text-xs transition absolute top-0 left-0 right-0 mx-auto opacity-0;
+      @apply bg-base-300 font-mono w-4 h-4 inline-flex items-center justify-center rounded-sm text-xs transition absolute top-0 left-0 right-0 mx-auto opacity-0;
     }
     &:hover, &:has(input:focus-visible) {
       .numberHint {

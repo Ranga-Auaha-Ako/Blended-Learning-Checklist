@@ -59,7 +59,8 @@
 <div
   class:expanded={!collapsed}
   class:red={currentRating === rating.no}
-  class:orange={currentRating === rating.nobut}
+  class:orange={currentRating === rating.nobut ||
+    currentRating === rating.maybe}
   class:yellow={currentRating === rating.yesbut}
   class:green={currentRating === rating.yes}
   class:hideIndex
@@ -136,7 +137,7 @@
     }
   }
   .sub-rows {
-    @apply bg-white bg-opacity-50 rounded-lg my-4 overflow-clip border-inherit border;
+    @apply bg-base-100 bg-opacity-50 rounded-lg my-4 overflow-clip border-inherit border;
     /* Custom padding to match the parent row */
     margin-left: calc(2rem + (100% - 4rem) * 0.08333);
     margin-right: 0.5rem;
@@ -155,37 +156,37 @@
   }
   .red {
     .sub-rows {
-      @apply border-red-200;
+      @apply border-red-200 dark:border-red-900;
       .sub-title {
-        @apply text-red-700;
+        @apply text-red-700 dark:text-red-200;
       }
     }
   }
   .orange {
     .sub-rows {
-      @apply border-orange-200;
+      @apply border-orange-200 dark:border-orange-900;
       .sub-title {
-        @apply text-orange-700;
+        @apply text-orange-700 dark:text-orange-200;
       }
     }
   }
   .yellow {
     .sub-rows {
-      @apply border-yellow-200;
+      @apply border-yellow-200 dark:border-yellow-900;
       .sub-title {
-        @apply text-yellow-700;
+        @apply text-yellow-700 dark:text-yellow-200;
       }
     }
   }
   .green {
     .sub-rows {
-      @apply border-green-200;
+      @apply border-green-200 dark:border-green-900;
       .sub-title {
-        @apply text-green-700;
+        @apply text-green-700 dark:text-green-200;
       }
     }
   }
   :global(.sub-rows) .sub-rows {
-    @apply bg-opacity-100 bg-white;
+    @apply bg-opacity-100 bg-base-100;
   }
 </style>

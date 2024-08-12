@@ -39,7 +39,7 @@
       {body}
     </p>
     <div
-      class="card-actions bg-white border-t border-t-gray-300 -mx-8 -mb-8 overflow-clip"
+      class="card-actions bg-base-100 border-t border-t-gray-300 -mx-8 -mb-8 overflow-clip"
     >
       <RatingButtons
         {rate}

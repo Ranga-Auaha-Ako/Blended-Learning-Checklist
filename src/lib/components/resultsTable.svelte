@@ -83,16 +83,16 @@
         yes = 3
        */
       &.rating-0 {
-        @apply bg-red-50 border-red-200 border-2;
+        @apply bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 border-2;
       }
       &.rating-1 {
-        @apply bg-orange-50 border-orange-200 border-2;
+        @apply bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800 border-2;
       }
       &.rating-2 {
-        @apply bg-yellow-50 border-yellow-200 border-2;
+        @apply bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 border-2;
       }
       &.rating-3 {
-        @apply bg-green-50 border-green-200 border-2;
+        @apply bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 border-2;
       }
     }
   }
