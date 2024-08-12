@@ -49,8 +49,8 @@
       {@const rating = ratingList[i]}
       <h2 class="tableTitle">
         {#if rating === 0}Not met
-        {:else if rating === 1}Not met but
-        {:else if rating === 2}Met but
+        {:else if rating === 1}Not met but...
+        {:else if rating === 2}Met but...
         {:else if rating === 3}Met
         {:else}Maybe
         {/if}

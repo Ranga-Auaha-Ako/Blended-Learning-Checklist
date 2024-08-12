@@ -4,7 +4,13 @@
     levelItemMap,
     levelItemMapReverse,
   } from "$lib/datasource/checklist";
-  import { appState, rating, ratingLabels } from "$lib/state.svelte";
+  import {
+    appState,
+    detailedCalculatedAvg,
+    quickCalculatedAvg,
+    rating,
+    ratingLabels,
+  } from "$lib/state.svelte";
   import { slide } from "svelte/transition";
   interface rowProps {
     idx?: number;
@@ -25,8 +31,27 @@
 
   const rowLevel = levelItemMapReverse[item.type];
 
-  const currentRating =
+  let currentRating =
     rowLevel === level ? appState[rowLevel].progress[item.name] : undefined;
+  // Use calculated fields for anything above "level"
+  let shouldCalculate = false;
+  switch (level) {
+    case "comprehensive":
+      if (rowLevel === "detailed" || rowLevel === "quick") {
+        shouldCalculate = true;
+      }
+    case "detailed":
+      if (rowLevel === "quick") {
+        shouldCalculate = true;
+      }
+    default:
+      break;
+  }
+  if (shouldCalculate && rowLevel === "detailed") {
+    currentRating = detailedCalculatedAvg()[item.name]?.rating;
+  } else if (shouldCalculate && rowLevel === "quick") {
+    currentRating = quickCalculatedAvg()[item.name]?.rating;
+  }
 
   let collapsed = $state(!shouldShowLevel(itemLevel(item)));
 </script>
@@ -51,8 +76,12 @@
       </div>
     {/if}
     <div class="name">{item.name}</div>
-    <div class="rating">
-      {currentRating !== undefined ? ratingLabels[currentRating] : ""}
+    <div class="rating" class:font-mono={shouldCalculate}>
+      {#if !shouldCalculate}
+        {currentRating !== undefined ? ratingLabels[currentRating] : ""}
+      {:else if currentRating}
+        {Math.round((currentRating + 1) * 10) / 10}/4
+      {/if}
     </div>
   </button>
   {#if !collapsed}
