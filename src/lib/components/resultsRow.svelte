@@ -58,11 +58,11 @@
 
 <div
   class:expanded={!collapsed}
-  class:red={currentRating === rating.no}
-  class:orange={currentRating === rating.nobut ||
-    currentRating === rating.maybe}
-  class:yellow={currentRating === rating.yesbut}
-  class:green={currentRating === rating.yes}
+  class:red={currentRating && Math.round(currentRating) === rating.no}
+  class:orange={(currentRating && Math.round(currentRating) === rating.nobut) ||
+    (currentRating && Math.round(currentRating) === rating.maybe)}
+  class:yellow={currentRating && Math.round(currentRating) === rating.yesbut}
+  class:green={currentRating && Math.round(currentRating) === rating.yes}
   class:hideIndex
 >
   <button
@@ -137,12 +137,12 @@
     }
   }
   .sub-rows {
-    @apply bg-base-100 bg-opacity-50 rounded-lg my-4 overflow-clip border-inherit border;
+    @apply bg-base-100 bg-opacity-50 rounded-lg my-4 overflow-clip border-base-300 border;
     /* Custom padding to match the parent row */
     margin-left: calc(2rem + (100% - 4rem) * 0.08333);
     margin-right: 0.5rem;
     .sub-title {
-      @apply font-semibold pl-4 pt-2 text-gray-500;
+      @apply font-semibold pl-4 pt-2 text-gray-500 dark:text-gray-400;
     }
   }
 

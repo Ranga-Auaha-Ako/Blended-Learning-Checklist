@@ -223,7 +223,7 @@
                 ></progress>
               </div>
               <div class="collapse-content">
-                <table class="table table-lg bg-white">
+                <table class="table table-lg bg-base-100">
                   <!-- head -->
                   <thead>
                     <tr>
@@ -309,12 +309,12 @@
     @apply rounded-box shadow-xl bg-base-100 h-full mx-20 grid grid-cols-4 overflow-hidden;
     view-transition-name: comprehensive;
     .sidePane {
-      @apply col-span-1 bg-gray-100 border-r border-gray-300 pt-6 overflow-y-auto;
+      @apply col-span-1 bg-base-300 border-r border-gray-300 dark:border-gray-800 pt-6 overflow-y-auto;
       :global(.checklist-item:hover) {
-        @apply bg-gray-200;
+        @apply bg-base-200;
       }
       :global(.checklist-item.active) {
-        @apply bg-gray-200 rounded-none;
+        @apply bg-base-200 rounded-none border-y border-base-100;
       }
     }
     .mainPane {
@@ -331,16 +331,16 @@
             @apply rounded overflow-clip transition;
           }
           &.red :global(.rating-row) {
-            @apply bg-red-100;
+            @apply bg-red-100 dark:bg-red-900;
           }
           &.orange :global(.rating-row) {
-            @apply bg-orange-100;
+            @apply bg-orange-100 dark:bg-orange-900;
           }
           &.yellow :global(.rating-row) {
-            @apply bg-yellow-100;
+            @apply bg-yellow-100 dark:bg-yellow-900;
           }
           &.green :global(.rating-row) {
-            @apply bg-green-100;
+            @apply bg-green-100 dark:bg-green-900;
           }
         }
       }
