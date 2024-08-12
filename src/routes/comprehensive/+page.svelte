@@ -90,6 +90,8 @@
             el.checked = false;
           }
         });
+        // Don't autoscroll if it's the first item
+        if (!prevCrit && firstIncompleteStandardIndex === 0) return;
         if (autoScroll)
           setTimeout(() => {
             if (nextEl.checkVisibility())
