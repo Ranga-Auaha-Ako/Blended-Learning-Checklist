@@ -119,7 +119,7 @@ current={appState.modes[mode].mode === routeMode.active
 
   <div class="col-span-2 grow shrink-0">
     <main
-      class="rounded-box shadow-xl bg-base-100 w-full min-h-full py-8 px-8"
+      class="rounded-box shadow-xl bg-base-100 w-full min-h-full py-8 px-8 flex flex-col h-full"
       style:--mode={mode}
     >
       {#if appState.modes[mode].mode === routeMode.intro}
