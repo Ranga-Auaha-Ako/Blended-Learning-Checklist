@@ -128,7 +128,11 @@
         <button
           class="btn btn-primary btn-success"
           onclick={() => {
-            window.location.hash && importState(window.location.hash.slice(1));
+            if (window.location.hash) {
+              importState(window.location.hash.slice(1));
+              window.location.hash = "";
+              window.location.reload();
+            }
           }}
         >
           Import
