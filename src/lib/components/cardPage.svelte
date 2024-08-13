@@ -265,12 +265,12 @@ current={appState.modes[mode].mode === routeMode.active
   mobileNav?.showModal();
 }}>Navigation</button>
 <dialog bind:this={mobileNav} class="modal backdrop-blur-lg">
-  <form method="dialog">
-    <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2">✕</button>
-  </form>
-  <div class="text-white flex max-h-[90vh]">
+  <div class="text-white flex max-h-[90vh] z-10">
     {@render sidebar()}
   </div>
+  <form method="dialog">
+    <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2 z-20">✕</button>
+  </form>
 </dialog>
 
 
