@@ -23,6 +23,7 @@
     "@types/pako": "^2.0.3",
     "autoprefixer": "^10.4.19",
     "browserslist-to-esbuild": "^2.1.1",
+    "buffer": "feross/buffer#pull/314/head",
     "daisyui": "^4.12.10",
     "kvin": "^1.2.14",
     "nanoid": "^5.0.7",

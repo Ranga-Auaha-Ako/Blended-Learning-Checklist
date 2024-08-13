@@ -3,34 +3,7 @@ import checklist from "./datasource/checklist";
 import { KVIN as baseKVIN } from "kvin";
 import pako from "pako";
 import { browser } from "$app/environment";
-
-// Source: https://stackoverflow.com/a/54123275
-// base64 to buffer
-async function base64ToBufferAsync(base64: string) {
-  const dataUrl = "data:application/octet-binary;base64," + base64;
-
-  return new Promise<Uint8Array>((r) => {
-    fetch(dataUrl)
-      .then((res) => res.arrayBuffer())
-      .then((buffer) => {
-        r(new Uint8Array(buffer));
-      });
-  });
-}
-
-// buffer to base64
-async function bufferToBase64Async(buffer: ArrayBuffer) {
-  const blob = new Blob([buffer], { type: "application/octet-binary" });
-  const fileReader = new FileReader();
-  return new Promise<string>((r) => {
-    fileReader.onload = function () {
-      const dataUrl = fileReader.result as string;
-      const base64 = dataUrl.substring(dataUrl.indexOf(",") + 1);
-      r(base64);
-    };
-    fileReader.readAsDataURL(blob);
-  });
-}
+import { Buffer } from "buffer";
 
 // Stringify
 const KVIN = new baseKVIN();
@@ -51,24 +24,25 @@ function compressedState() {
   });
 }
 
-export async function exportState() {
+export function exportState() {
   const state = KVIN.stringify(compressedState(), { tune: "size" });
   console.log(compressedState(), state, btoa(state));
   const compressed = pako.deflate(state);
-  const b64encoded = await bufferToBase64Async(compressed);
-  console.log(compressed, b64encoded);
-  return b64encoded;
+  const buffer = Buffer.from(compressed);
+  const encoded = buffer.toString("base64url");
+  console.log(compressed, encoded);
+  return encoded;
 }
 export async function exportStateUrl() {
   const url = new URL(window.location.href);
-  url.hash = await exportState();
+  url.hash = exportState();
   return url.href;
 }
 
-export async function importState(url: string) {
+export async function importState(base64: string) {
   try {
-    const decoded = await base64ToBufferAsync(url);
-    const decompressed = pako.inflate(decoded, { to: "string" });
+    const buffer = Buffer.from(base64, "base64url");
+    const decompressed = pako.inflate(buffer, { to: "string" });
     const newState = KVIN.parse(decompressed) as ReturnType<
       typeof compressedState
     >;
