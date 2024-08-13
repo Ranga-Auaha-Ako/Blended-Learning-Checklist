@@ -6,10 +6,11 @@
   let url: string | undefined = $state();
   let modal: HTMLDialogElement | undefined = $state();
   let showCopied = $state(false);
+  const { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();
 </script>
 
 <button
-  class="btn btn-primary"
+  class="btn btn-primary btn-{size}"
   onclick={async () => {
     url = await exportStateUrl();
     modal?.showModal();
@@ -30,7 +31,6 @@
         onclick={() => {
           if (showCopied) {
             showCopied = false;
-            return;
           }
           if (!url) return;
           // Attempt to use the native share function, or copy the URL to the clipboard

@@ -2,6 +2,7 @@
   import Checkbox from "$lib/components/checkbox.svelte";
   import RatingButtons from "$lib/components/ratingButtons.svelte";
   import ResultsTable from "$lib/components/resultsTable.svelte";
+  import ShareState from "$lib/components/shareState.svelte";
   import SidebarChecklist from "$lib/components/sidebarChecklist.svelte";
   import checklist from "$lib/datasource/checklist";
   import { appState, rating, routeMode } from "$lib/state.svelte";
@@ -170,7 +171,7 @@
           <h3 class="text-3xl font-semibold mb-4">
             {checklist.standards[activeList].name}
           </h3>
-          <div class="toolbar flex justify-end items-center gap-4 mb-4">
+          <div class="toolbar flex justify-end items-center gap-2 mb-4">
             <div class="form-control">
               <label class="label cursor-pointer gap-2">
                 <span class="label-text">Auto-scroll to next item</span>
@@ -194,6 +195,7 @@
             >
               Restart
             </button>
+            <ShareState size="sm"></ShareState>
           </div>
           {#each checklist.standards[activeList].criteria as criterion, ic}
             <div class="collapse collapse-arrow bg-base-200">
@@ -283,19 +285,22 @@
       <h3 class="text-3xl font-semibold mb-4">
         Results
 
-        <button
-          class="btn btn-sm btn-error btn-outline float-right"
-          onclick={() => {
-            confirm("Are you sure you want to restart?") &&
-              (() => {
-                activeList = 0;
-                appState.comprehensive.progress = {};
-                appState.comprehensive.mode = routeMode.active;
-              })();
-          }}
-        >
-          Restart
-        </button>
+        <div class="float-right flex gap-2 text-base font-normal">
+          <button
+            class="btn btn-sm btn-error btn-outline"
+            onclick={() => {
+              confirm("Are you sure you want to restart?") &&
+                (() => {
+                  activeList = 0;
+                  appState.comprehensive.progress = {};
+                  appState.comprehensive.mode = routeMode.active;
+                })();
+            }}
+          >
+            Restart
+          </button>
+          <ShareState size="sm"></ShareState>
+        </div>
       </h3>
       <p>Review the results of the comprehensive review.</p>
 
