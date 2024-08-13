@@ -6,6 +6,7 @@
   import { appState, ratingList, routeMode } from "$lib/state.svelte";
   import { fade, fly } from "svelte/transition";
   import MdiArrowBack from "virtual:icons/mdi/arrowBack";
+  import ShareState from "./shareState.svelte";
 
   interface cardProps {
     mode: keyof typeof appState;
@@ -164,15 +165,24 @@
         </div>
       {:else if appState[mode].mode === routeMode.complete}
         <div out:fade>
-          <button
-            class="btn btn-primary mt-8 float-right"
-            onclick={() => {
-              appState[mode].mode = routeMode.intro;
-              appState[mode].progress = {};
-            }}
-          >
-            Start Over
-          </button>
+          <div class="buttonStack float-right flex gap-2">
+            <button
+              class="btn btn-error btn-outline"
+              onclick={() => {
+                if (
+                  !confirm(
+                    "Are you sure you want to start over? This will delete all progress from this checklist. Consider using the share button to save progress first!"
+                  )
+                )
+                  return;
+                appState[mode].mode = routeMode.intro;
+                appState[mode].progress = {};
+              }}
+            >
+              Start Over
+            </button>
+            <ShareState />
+          </div>
           <h2 class="font-bold text-4xl">You're Done!</h2>
           <p>
             {text[routeMode.complete]}

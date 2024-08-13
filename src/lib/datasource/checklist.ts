@@ -15,19 +15,11 @@ export const levelItemMapReverse = {
 
 class StandardList {
   constructor(public standards: Standard[]) {}
-  public flatten(
-    item: Standard | Criteria | Indicator | undefined = undefined
-  ) {
-    if (item?.type === "indicator") {
-      return item.name;
-    }
-    if (item?.type === "criteria") {
-      return item.indicators.map((i) => i.name);
-    }
-    if (item?.type === "standard") {
-      return item.criteria.map((c) => c.name);
-    }
-    return this.standards.map((s) => s.name);
+  get flatCriteria() {
+    return this.standards.flatMap((s) => s.criteria);
+  }
+  get flatIndicators() {
+    return this.flatCriteria.flatMap((c) => c.indicators);
   }
 }
 
