@@ -20,13 +20,22 @@
     hideRated = true,
     binaryMode = false,
   }: cardStackProps = $props();
-  let cardStack = $derived(hideRated ? cards.filter((c) => !c.rating) : cards);
-  let filteredCurrent = $derived(
-    hideRated ? cardStack.indexOf(cards[current]) : current
-  );
+  let { cardStack, filteredCurrent } = $derived.by(() => {
+    let newCardStack = hideRated
+      ? cards.filter((c) => c.rating === undefined)
+      : cards;
+    return {
+      cardStack: newCardStack,
+      filteredCurrent: hideRated
+        ? newCardStack.indexOf(cards[current])
+        : current,
+    };
+  });
 
   if (hideRated) {
-    let foundCurrent = cards.indexOf(cards.filter((c) => !c.rating)[current]);
+    let foundCurrent = cards.indexOf(
+      cards.filter((c) => c.rating === undefined)[current]
+    );
     if (foundCurrent !== -1) current = foundCurrent;
     console.log("Updated current", current);
   }
@@ -58,7 +67,7 @@
     // There is an accessible keypress capture in the ratingButtons component
     if (ratingShortcuts.includes(e.key)) {
       const currentRating = ratingItems[ratingShortcuts.indexOf(e.key)];
-      rate && rate(filteredCurrent, currentRating);
+      rate && rate(current, currentRating);
       nextCard();
     }
   }}
@@ -70,8 +79,8 @@
       {...card}
       active={i === 0}
       rate={(rating) => {
-        if (rate) rate(cards.indexOf(card), rating);
         nextCard();
+        if (rate) rate(cards.indexOf(card), rating);
       }}
       {binaryMode}
     ></Card>

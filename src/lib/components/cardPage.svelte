@@ -25,28 +25,19 @@
       case "quick":
         return checklist.standards.map((s) => ({ ...s, mode }));
       case "detailed":
-        return checklist.standards.flatMap((s, idx) =>
-          s.criteria.map((c, idx2) => ({
-            ...c,
-            standard: s,
-            standardIndex: idx,
-            criteriaIndex: idx2,
-            mode,
-          }))
-        );
+        return checklist.flatCriteria.map((c, idx) => ({
+          ...c,
+          standard: checklist.standards[c.standardIndex],
+          criteriaIndex: idx,
+          mode,
+        }));
       case "comprehensive":
-        return checklist.standards.flatMap((s, idx) =>
-          s.criteria.flatMap((c, idx2) =>
-            c.indicators.map((i, idx3) => ({
-              ...i,
-              standard: s,
-              standardIndex: idx,
-              criteriaIndex: idx2,
-              indicatorIndex: idx3,
-              mode,
-            }))
-          )
-        );
+        return checklist.flatIndicators.map((i, idx) => ({
+          ...i,
+          standard: checklist.standards[i.standardIndex],
+          indicatorIndex: idx,
+          mode,
+        }));
     }
   });
 

@@ -16,10 +16,18 @@ export const levelItemMapReverse = {
 class StandardList {
   constructor(public standards: Standard[]) {}
   get flatCriteria() {
-    return this.standards.flatMap((s) => s.criteria);
+    return this.standards.flatMap((s, idx) =>
+      s.criteria.map((c) => ({ ...c, standardIndex: idx }))
+    );
   }
   get flatIndicators() {
-    return this.flatCriteria.flatMap((c) => c.indicators);
+    return this.flatCriteria.flatMap((c, idx) =>
+      c.indicators.map((i) => ({
+        ...i,
+        standardIndex: c.standardIndex,
+        criteriaIndex: idx,
+      }))
+    );
   }
 }
 
