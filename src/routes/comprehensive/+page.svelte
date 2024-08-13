@@ -172,31 +172,60 @@
           <h3 class="text-3xl font-semibold mb-4">
             {checklist.standards[activeList].name}
           </h3>
-          <div class="toolbar flex justify-end items-center gap-2 mb-4">
-            <div class="form-control">
-              <label class="label cursor-pointer gap-2">
-                <span class="label-text">Auto-scroll to next item</span>
-                <input
-                  type="checkbox"
-                  class="toggle"
-                  bind:checked={autoScroll}
-                />
-              </label>
+          <div
+            class="toolbar flex flex-wrap items-center justify-between gap-2 mb-4"
+          >
+            <fieldset class="flex flex-row gap-2 basis-96 grow max-w-xs">
+              <input
+                type="text"
+                placeholder="Course title (eg, COMPSCI 101)"
+                class="input input-sm input-bordered w-full"
+                class:input-error={!appState.meta.title}
+                bind:value={appState.meta.title}
+                required
+                title="Please enter a course title"
+              />
+              <input
+                type="text"
+                placeholder="Semester"
+                class="input input-sm input-bordered w-full col-span-1"
+                bind:value={appState.meta.semester}
+                title="Please enter a semester"
+              />
+              <input
+                type="number"
+                placeholder="Year"
+                class="input input-sm input-bordered w-full col-span-2"
+                bind:value={appState.meta.year}
+                title="Please enter a year"
+              />
+            </fieldset>
+            <div class="flex flex-row gap-2 items-center">
+              <div class="form-control shrink-0">
+                <label class="label cursor-pointer gap-2">
+                  <span class="label-text">Auto-scroll to next item</span>
+                  <input
+                    type="checkbox"
+                    class="toggle"
+                    bind:checked={autoScroll}
+                  />
+                </label>
+              </div>
+              <button
+                class="btn btn-sm btn-error btn-outline"
+                onclick={() => {
+                  confirm("Are you sure you want to restart?") &&
+                    (() => {
+                      activeList = 0;
+                      appState.modes.comprehensive.progress = {};
+                      appState.modes.comprehensive.mode = routeMode.active;
+                    })();
+                }}
+              >
+                Restart
+              </button>
+              <ShareState level="comprehensive" size="sm"></ShareState>
             </div>
-            <button
-              class="btn btn-sm btn-error btn-outline"
-              onclick={() => {
-                confirm("Are you sure you want to restart?") &&
-                  (() => {
-                    activeList = 0;
-                    appState.modes.comprehensive.progress = {};
-                    appState.modes.comprehensive.mode = routeMode.active;
-                  })();
-              }}
-            >
-              Restart
-            </button>
-            <ShareState level="comprehensive" size="sm"></ShareState>
           </div>
           {#each checklist.standards[activeList].criteria as criterion, ic}
             <div class="collapse collapse-arrow bg-base-200">

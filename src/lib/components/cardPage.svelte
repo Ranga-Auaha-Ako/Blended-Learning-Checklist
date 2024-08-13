@@ -105,17 +105,62 @@
             {text[routeMode.intro]}
           </p>
 
-          <button
-            class="btn btn-outline btn-primary mt-8 block mx-auto"
-            onclick={() => {
-              appState.modes[mode].mode = routeMode.active;
-              current = 0;
-            }}
+          <fieldset
+            class="flex flex-col gap-2 items-center max-w-xs mx-auto mt-8"
           >
-            Get Started
-          </button>
+            <input
+              type="text"
+              placeholder="Course title (eg, COMPSCI 101)"
+              class="input input-bordered w-full"
+              class:input-error={!appState.meta.title}
+              bind:value={appState.meta.title}
+              required
+              title="Please enter a course title"
+            />
+            <div class="grid grid-cols-3 gap-1">
+              <input
+                type="text"
+                placeholder="Semester"
+                class="input input-bordered w-full col-span-1"
+                bind:value={appState.meta.semester}
+                title="Please enter a semester"
+              />
+              <input
+                type="number"
+                placeholder="Year"
+                class="input input-bordered w-full col-span-2"
+                bind:value={appState.meta.year}
+                title="Please enter a year"
+              />
+            </div>
+            <button
+              class="btn btn-block btn-outline btn-primary block mx-auto"
+              onclick={() => {
+                appState.modes[mode].mode = routeMode.active;
+                current = 0;
+              }}
+              disabled={!appState.meta.title}
+            >
+              Get Started
+            </button>
+          </fieldset>
         </div>
       {:else if appState.modes[mode].mode === routeMode.active}
+        <div class="toolbar flex justify-end items-center gap-2 mb-4">
+          <button
+            class="btn btn-sm btn-error btn-outline"
+            onclick={() => {
+              confirm("Are you sure you want to restart?") &&
+                (() => {
+                  current = 0;
+                  appState.modes.quick.progress = {};
+                  appState.modes.quick.mode = routeMode.intro;
+                })();
+            }}
+          >
+            Restart
+          </button>
+        </div>
         <div in:fly={{ delay: 150, y: 50 }} class="flex flex-col h-full">
           <div class="grid auto-rows-auto grid-cols-1 gap-0">
             {#if currentItem.mode !== "quick"}

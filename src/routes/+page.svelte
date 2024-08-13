@@ -55,7 +55,7 @@
         <fieldset class="flex flex-col gap-2 items-center max-w-xs mx-auto">
           <input
             type="text"
-            placeholder="Course Title"
+            placeholder="Course title (eg, COMPSCI 101)"
             class="formInput"
             bind:value={appState.meta.title}
             required
