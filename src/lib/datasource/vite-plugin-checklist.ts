@@ -3,6 +3,7 @@
 
 import { createFilter } from "@rollup/pluginutils";
 import toSource from "tosource";
+import fs from "node:fs";
 import xlsx from "xlsx";
 const fileRegex = /telas-checklist\.xlsx?$/;
 
@@ -27,6 +28,8 @@ export interface Standard {
 }
 
 function parseSheet(book: xlsx.WorkBook) {
+  if (!book.Workbook || !book.Workbook.Sheets || !book.Workbook.Sheets[0].name)
+    return;
   const sheet = book.Sheets[book.Workbook.Sheets[0].name];
   const data = xlsx.utils.sheet_to_json<{
     Standard: string | false;
@@ -85,9 +88,10 @@ export default function xlsxTransform() {
   return {
     name: "vite-xlsx",
 
-    transform(src, id) {
+    transform(_, id: string) {
       if (fileRegex.test(id)) {
-        const xlsxData = xlsx.readFile(id);
+        const file = fs.readFileSync(id);
+        const xlsxData = xlsx.read(file);
         const generatedCode = `const data = ${toSource(
           parseSheet(xlsxData)
         )};\nexport default data;`;
