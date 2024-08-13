@@ -18,6 +18,9 @@
     level: keyof typeof appState;
     hideIndex?: boolean;
   }
+  import MaterialSymbolsStarRateOutlineRounded from "virtual:icons/material-symbols/star-rate-outline-rounded";
+  import MaterialSymbolsStarRateHalfRounded from "virtual:icons/material-symbols/star-rate-half-rounded";
+  import MaterialSymbolsStarRateRounded from "virtual:icons/material-symbols/star-rate-rounded";
   let { idx, item, level, hideIndex }: rowProps = $props();
 
   const shouldShowLevel = (rowLevel: keyof typeof appState) => {
@@ -77,11 +80,27 @@
       </div>
     {/if}
     <div class="name">{item.name}</div>
-    <div class="rating" class:font-mono={shouldCalculate}>
+    <div class="rating">
       {#if !shouldCalculate}
         {currentRating !== undefined ? ratingLabels[currentRating] : ""}
-      {:else if currentRating}
-        {Math.round((currentRating + 1) * 10) / 10}/4
+      {:else if currentRating !== undefined}
+        {@const roundedRating = Math.round((currentRating + 1) * 2) / 2}
+        {@const isHalf = roundedRating % 1 > 0.1}
+        <div class="flex gap-0 text-lg">
+          {#each Array.from({ length: Math.floor(roundedRating) }) as _}
+            <MaterialSymbolsStarRateRounded class="w-[1em] h-[1em] shrink-0" />
+          {/each}
+          {#if isHalf}
+            <MaterialSymbolsStarRateHalfRounded
+              class="w-[1em] h-[1em] shrink-0"
+            />
+          {/if}
+          {#each Array.from({ length: 4 - Math.ceil(roundedRating) }) as _}
+            <MaterialSymbolsStarRateOutlineRounded
+              class="w-[1em] h-[1em] shrink-0"
+            />
+          {/each}
+        </div>
       {/if}
     </div>
   </button>
