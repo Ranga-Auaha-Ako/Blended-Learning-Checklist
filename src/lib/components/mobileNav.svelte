@@ -11,7 +11,7 @@
 </script>
 
 
-<button class:btn-bottom-abs={absolute} class="btn btn-sm mb-4 w-full bg-gray-900 text-white border-none sm:hidden" onclick={()=>{
+<button class:btn-bottom-abs={absolute} class="btn btn-sm mb-4 w-full bg-gray-900 text-white border-none md:hidden" onclick={()=>{
   mobileNav?.showModal();
 }}>Navigation</button>
 <dialog id="mobileNav" bind:this={mobileNav} class="modal backdrop-blur-lg">

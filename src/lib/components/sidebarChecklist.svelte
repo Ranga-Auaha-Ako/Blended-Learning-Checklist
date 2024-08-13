@@ -72,20 +72,21 @@
     @apply grow overflow-y-auto relative;
     .checklist {
       @apply flex flex-col;
+    }
+
+    &.mask {
       /* Padding to avoid cards being cut off by mask */
-      &.mask {
-        @apply pt-4 pb-28;
-        &.autoScroll {
-          @apply scroll-p-20;
-        }
-        mask-image: linear-gradient(
-          to bottom,
-          rgba(0, 0, 0, 0),
-          rgba(0, 0, 0, 1) 1rem,
-          rgba(0, 0, 0, 1) 70%,
-          rgba(0, 0, 0, 0)
-        );
+      @apply pt-4 pb-28;
+      &.autoScroll {
+        @apply scroll-p-20;
       }
+      mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0),
+        rgba(0, 0, 0, 1) 1rem,
+        rgba(0, 0, 0, 1) 70%,
+        rgba(0, 0, 0, 0)
+      );
     }
     &.autoScroll {
       @apply snap-y snap-mandatory scroll-smooth;

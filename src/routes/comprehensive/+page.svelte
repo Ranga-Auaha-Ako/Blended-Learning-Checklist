@@ -119,7 +119,7 @@
 {#snippet sidebar()}
 <SidebarChecklist
 items={checklist.standards.map((standard, idx) => ({
-  text: standard.name,
+  text: `${idx+1}. ${standard.name}`,
   state:
     firstIncompleteStandardIndex === -1 ||
     idx < firstIncompleteStandardIndex,
@@ -137,7 +137,7 @@ autoScroll={false}
 
 {/snippet}
 
-<div class="heading text-white mx-10 sm:mx-20 my-4 sm:my-10 flex flex-col">
+<div class="heading text-white mx-10 md:mx-20 my-4 md:my-10 flex flex-col">
   <div class="flex gap-2 md:contents w-full items-center justify-between">
     <a
       href="/"
@@ -187,7 +187,7 @@ autoScroll={false}
           in:fade={{ delay: 300 }}
         >
           <h3 class="text-3xl font-semibold mb-4">
-            {checklist.standards[activeList].name}
+            {activeList+1}. {checklist.standards[activeList].name}
           </h3>
           <div
             class="toolbar flex flex-wrap items-center justify-between gap-2 mb-4"
@@ -360,10 +360,10 @@ autoScroll={false}
 
 <style lang="postcss">
   main {
-    @apply rounded-box shadow-xl bg-base-100 h-full mx-3 sm:mx-20 grid grid-cols-4 overflow-hidden;
+    @apply rounded-box shadow-xl bg-base-100 h-full mx-3 md:mx-20 grid grid-cols-4 overflow-hidden;
     view-transition-name: comprehensive;
     .sidePane {
-      @apply hidden sm:block col-span-1 bg-base-300 border-r border-gray-300 dark:border-gray-800 pt-6 overflow-y-auto;
+      @apply hidden md:block col-span-1 bg-base-300 border-r border-gray-300 dark:border-gray-800 pt-6 overflow-y-auto;
       :global(.checklist-item:hover) {
         @apply bg-base-200;
       }
@@ -372,7 +372,7 @@ autoScroll={false}
       }
     }
     .mainPane {
-      @apply col-span-4 sm:col-span-3 p-6 sm:p-12 sm:pl-6;
+      @apply col-span-4 md:col-span-3 p-6 md:p-12 md:pl-6;
       container-type: inline-size;
       table {
         @apply h-fit overflow-clip;

@@ -66,7 +66,7 @@ items={flatChecklist.map((s, idx) => ({
   state: appState.modes[mode].progress[s.name] !== undefined,
   text:
     s.mode === "quick"
-      ? s.name
+      ? `${idx + 1}. ${s.name}`
       : s.mode === "detailed"
         ? `${s.standardIndex + 1}.${s.criteriaIndex + 1} ${s.name}`
         : `${s.standardIndex + 1}.${s.criteriaIndex + 1}.${s.indicatorIndex + 1} ${s.name}`,
@@ -84,10 +84,10 @@ current={appState.modes[mode].mode === routeMode.active
 {/snippet}
 
 <div
-  class="flex flex-col md:grid md:grid-cols-3 h-screen w-full gap-3 p-3 sm:gap-8 sm:p-8"
+  class="flex flex-col md:grid main-layout h-screen w-full gap-3 p-3 sm:gap-8 sm:p-8"
 >
   <!-- sidebar -->
-  <div class="col-span-1 shrink-0 text-white overflow-y-auto">
+  <div class=" shrink-0 text-white overflow-y-auto">
     <div
       class="sidebar h-full items-center sm:items-start sm:flex-col gap-2 md:gap-4 flex"
     >
@@ -116,7 +116,7 @@ current={appState.modes[mode].mode === routeMode.active
     </div>
   </div>
 
-  <div class="col-span-2 grow shrink-0">
+  <div class=" grow shrink-0">
     <main
       class="rounded-box shadow-xl bg-base-100 w-full min-h-full py-8 px-8 flex flex-col h-full"
       style:--mode={mode}
@@ -266,5 +266,10 @@ current={appState.modes[mode].mode === routeMode.active
 <style lang="postcss">
   main {
     view-transition-name: var(--mode);
+  }
+  @media screen and (min-width: 640px) {
+    .main-layout {
+      grid-template-columns: min(33%,25rem) 1fr;
+    }
   }
 </style>
