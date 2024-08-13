@@ -77,7 +77,7 @@
 
 <style lang="postcss">
   .ratingTables {
-    @apply flex flex-col gap-4;
+    @apply flex flex-col gap-4 @container;
     .resultsTable {
       /*
         no = 0
@@ -105,19 +105,19 @@
   .resultsTable {
     @apply bg-base-100 rounded-box overflow-clip shadow w-full h-full text-sm;
     > .table-head {
-      @apply grid grid-cols-12 gap-2 px-8 py-4;
+      @apply grid grid-cols-12 gap-2 px-4 @md:px-8 py-4;
     }
     .table-head {
       @apply font-semibold opacity-80 border-b border-black border-opacity-5 text-xs;
 
       .idx {
-        @apply col-span-1;
+        @apply col-span-2 @md:col-span-1;
       }
       .name {
-        @apply col-span-10;
+        @apply hidden @md:block col-span-10;
       }
       .rating {
-        @apply col-span-1;
+        @apply col-span-3 col-start-10 @md:col-start-auto @md:col-span-1 justify-self-end;
       }
     }
   }

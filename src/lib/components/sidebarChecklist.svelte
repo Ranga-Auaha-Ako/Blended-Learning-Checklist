@@ -38,52 +38,57 @@
   });
 </script>
 
-<div class="checklist" class:mask class:rounded class:autoScroll>
-  {#each items as item, idx}
-    <label
-      for="checklist-{idx}"
-      class="checklist-item p-4 gap-4"
-      class:item-unchecked={!item.state}
-      class:active={idx === current}
-      bind:this={itemsEls[idx]}
-    >
-      <input
-        type="radio"
-        id="checklist-{idx}"
-        class="absolute opacity-0 pointer-events-none"
-        bind:group={current}
-        value={idx}
-        onchange={() => current !== undefined && select(current)}
-      />
-      <span class="text-[1.25rem] grow-0">
-        <Checkbox checked={item.state}></Checkbox>
-      </span>
-      <span class="grow text-left">
-        {item.text}
-      </span>
-    </label>
-  {/each}
+<div class="checklist-container" class:mask class:rounded class:autoScroll>
+  <div class="checklist">
+    {#each items as item, idx}
+      <label
+        for="checklist-{idx}"
+        class="checklist-item p-4 gap-4"
+        class:item-unchecked={!item.state}
+        class:active={idx === current}
+        bind:this={itemsEls[idx]}
+      >
+        <input
+          type="radio"
+          id="checklist-{idx}"
+          class="absolute opacity-0 pointer-events-none"
+          bind:group={current}
+          value={idx}
+          onchange={() => current !== undefined && select(current)}
+        />
+        <span class="text-[1.25rem] grow-0">
+          <Checkbox checked={item.state}></Checkbox>
+        </span>
+        <span class="grow text-left">
+          {item.text}
+        </span>
+      </label>
+    {/each}
+  </div>
 </div>
 
 <style lang="postcss">
-  .checklist {
-    @apply flex flex-col grow overflow-y-auto;
+  .checklist-container {
+    @apply grow overflow-y-auto relative;
+    .checklist {
+      @apply flex flex-col;
+      /* Padding to avoid cards being cut off by mask */
+      &.mask {
+        @apply pt-4 pb-28;
+        &.autoScroll {
+          @apply scroll-p-20;
+        }
+        mask-image: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0),
+          rgba(0, 0, 0, 1) 1rem,
+          rgba(0, 0, 0, 1) 70%,
+          rgba(0, 0, 0, 0)
+        );
+      }
+    }
     &.autoScroll {
       @apply snap-y snap-mandatory scroll-smooth;
-    }
-    /* Padding to avoid cards being cut off by mask */
-    &.mask {
-      @apply pt-4 pb-28;
-      &.autoScroll {
-        @apply scroll-p-20;
-      }
-      mask-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0),
-        rgba(0, 0, 0, 1) 1rem,
-        rgba(0, 0, 0, 1) 70%,
-        rgba(0, 0, 0, 0)
-      );
     }
     &.rounded {
       .checklist-item {

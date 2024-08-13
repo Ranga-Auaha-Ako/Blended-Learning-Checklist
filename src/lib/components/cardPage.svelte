@@ -57,51 +57,75 @@
       appState.modes[mode].mode = routeMode.complete;
     }
   });
+
+  let mobileNav: HTMLDialogElement | undefined = $state();
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-3 h-screen w-full gap-8 p-8">
+{#snippet sidebar()}
+<SidebarChecklist
+items={flatChecklist.map((s, idx) => ({
+  state: appState.modes[mode].progress[s.name] !== undefined,
+  text:
+    s.mode === "quick"
+      ? s.name
+      : s.mode === "detailed"
+        ? `${s.standardIndex + 1}.${s.criteriaIndex + 1} ${s.name}`
+        : `${s.standardIndex + 1}.${s.criteriaIndex + 1}.${s.indicatorIndex + 1} ${s.name}`,
+}))}
+select={(idx) => {
+  appState.modes[mode].mode = routeMode.active;
+  current = idx;
+  hideRated = false;
+  mobileNav?.close();
+}}
+current={appState.modes[mode].mode === routeMode.active
+  ? current
+  : undefined}
+></SidebarChecklist>
+{/snippet}
+
+<div
+  class="flex flex-col md:grid md:grid-cols-3 h-screen w-full gap-3 p-3 sm:gap-8 sm:p-8"
+>
   <!-- sidebar -->
-  <div class="col-span-1 text-white overflow-y-auto">
-    <div class="sidebar h-full flex flex-col gap-4">
-      <a href="/" class="btn btn-ghost text-xl -ml-3.5 w-auto mr-auto">
-        <MdiArrowBack></MdiArrowBack>
-        Return to menu
-      </a>
-      <h2 class="font-semibold text-5xl">{text.title}</h2>
-      <p class="text-lg font-light text-gray-100">
+  <div class="col-span-1 shrink-0 text-white overflow-y-auto">
+    <div
+      class="sidebar h-full items-center sm:items-start sm:flex-col gap-2 md:gap-4 flex"
+    >
+      <div class="flex gap-2 md:contents w-full items-center justify-between">
+        <a
+          href="/"
+          class="btn btn-ghost sm:text-xl -ml-3.5 w-auto mr-auto"
+          title="Return to menu"
+        >
+          <MdiArrowBack></MdiArrowBack>
+          <span class="hidden md:inline" aria-hidden="true">Return to menu</span
+          >
+        </a>
+        <h2
+          class="font-semibold leading-tight md:leading-normal sm:text-3xl md:text-5xl"
+        >
+          {text.title}
+        </h2>
+      </div>
+      <p class="text-base md:text-lg hidden sm:block font-light text-gray-100">
         {text.sidebar}
       </p>
-      <SidebarChecklist
-        items={flatChecklist.map((s, idx) => ({
-          state: appState.modes[mode].progress[s.name] !== undefined,
-          text:
-            s.mode === "quick"
-              ? s.name
-              : s.mode === "detailed"
-                ? `${s.standardIndex + 1}.${s.criteriaIndex + 1} ${s.name}`
-                : `${s.standardIndex + 1}.${s.criteriaIndex + 1}.${s.indicatorIndex + 1} ${s.name}`,
-        }))}
-        select={(idx) => {
-          appState.modes[mode].mode = routeMode.active;
-          current = idx;
-          hideRated = false;
-        }}
-        current={appState.modes[mode].mode === routeMode.active
-          ? current
-          : undefined}
-      ></SidebarChecklist>
+      <div class="hidden md:contents">
+        {@render sidebar()}
+      </div>
     </div>
   </div>
 
-  <div class="col-span-2">
+  <div class="col-span-2 grow shrink-0">
     <main
-      class="rounded-box shadow-xl bg-base-100 w-full h-full py-8 px-8"
+      class="rounded-box shadow-xl bg-base-100 w-full min-h-full py-8 px-8"
       style:--mode={mode}
     >
       {#if appState.modes[mode].mode === routeMode.intro}
         <div out:fade>
-          <h2 class="font-bold text-4xl">Introduction</h2>
-          <p class="text-lg">
+          <h2 class="font-bold text-3xl md:text-4xl">Introduction</h2>
+          <p class="md:text-lg">
             {text[routeMode.intro]}
           </p>
 
@@ -117,18 +141,18 @@
               required
               title="Please enter a course title"
             />
-            <div class="grid grid-cols-3 gap-1">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-1 w-full">
               <input
                 type="text"
                 placeholder="Semester"
-                class="input input-bordered w-full col-span-1"
+                class="input input-bordered w-full md:col-span-1"
                 bind:value={appState.meta.semester}
                 title="Please enter a semester"
               />
               <input
                 type="number"
                 placeholder="Year"
-                class="input input-bordered w-full col-span-2"
+                class="input input-bordered w-full md:col-span-2"
                 bind:value={appState.meta.year}
                 title="Please enter a year"
               />
@@ -146,23 +170,33 @@
           </fieldset>
         </div>
       {:else if appState.modes[mode].mode === routeMode.active}
-        <div class="toolbar flex justify-end items-center gap-2 mb-4">
-          <button
-            class="btn btn-sm btn-error btn-outline"
-            onclick={() => {
-              confirm("Are you sure you want to restart?") &&
-                (() => {
-                  current = 0;
-                  appState.modes.quick.progress = {};
-                  appState.modes.quick.mode = routeMode.intro;
-                })();
-            }}
-          >
-            Restart
-          </button>
-        </div>
         <div in:fly={{ delay: 150, y: 50 }} class="flex flex-col h-full">
           <div class="grid auto-rows-auto grid-cols-1 gap-0">
+            <div class="toolbar flex justify-end items-center gap-2 mb-4">
+              <div class="grow">
+                <p class="font-light leading-3 p-0">
+                  {progress} Completed
+                </p>
+                <progress
+                  class="progress w-full h-1 p-0 [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]"
+                  value={progress}
+                  max={flatChecklist.length}
+                ></progress>
+              </div>
+              <button
+                class="btn btn-sm btn-error btn-outline"
+                onclick={() => {
+                  confirm("Are you sure you want to restart?") &&
+                    (() => {
+                      current = 0;
+                      appState.modes.quick.progress = {};
+                      appState.modes.quick.mode = routeMode.intro;
+                    })();
+                }}
+              >
+                Restart
+              </button>
+            </div>
             {#if currentItem.mode !== "quick"}
               {#key currentItem.standardIndex}
                 <h3
@@ -179,7 +213,7 @@
               {/key}
             {/if}
           </div>
-          <div class="w-full grow flex items-center mb-8">
+          <div class="w-full grow flex items-center mb-14 sm:mb-8">
             <CardStack
               cards={flatChecklist.map((s) => ({
                 title: s.name,
@@ -195,22 +229,12 @@
             />
           </div>
 
-          <div class="bottom">
-            <progress
-              class="progress w-full h-2 -mt-2"
-              value={progress}
-              max={flatChecklist.length}
-            ></progress>
-            <p class="text-lg font-light">
-              {progress} Completed
-            </p>
-          </div>
         </div>
       {:else if appState.modes[mode].mode === routeMode.complete}
         <div out:fade>
-          <div class="buttonStack float-right flex gap-2">
+          <div class="buttonStack sm:float-right justify-center sm:justify-normal flex gap-2">
             <button
-              class="btn btn-error btn-outline"
+              class="btn btn-error btn-outline btn-sm sm:btn-md"
               onclick={() => {
                 if (
                   !confirm(
@@ -236,6 +260,19 @@
     </main>
   </div>
 </div>
+
+<button class="btn btn-sm w-auto right-0 fixed bottom-0 left-0 m-3 bg-gray-900 text-white border-none sm:hidden" onclick={()=>{
+  mobileNav?.showModal();
+}}>Navigation</button>
+<dialog bind:this={mobileNav} class="modal backdrop-blur-lg">
+  <form method="dialog">
+    <button class="btn btn-sm btn-circle btn-ghost text-white absolute right-2 top-2">✕</button>
+  </form>
+  <div class="text-white flex max-h-[90vh]">
+    {@render sidebar()}
+  </div>
+</dialog>
+
 
 <style lang="postcss">
   main {

@@ -73,7 +73,7 @@
   }}
 />
 
-<div class="stack mx-auto grid" bind:this={cardStackEl}>
+<div class="stack mx-auto grid h-full max-h-[30rem]" bind:this={cardStackEl}>
   {#each cardStack.slice(filteredCurrent, filteredCurrent + 3) as card, i (card.title)}
     <Card
       {...card}

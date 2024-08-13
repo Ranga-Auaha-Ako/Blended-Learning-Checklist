@@ -8,5 +8,5 @@ export default {
     extend: {},
   },
 
-  plugins: [daisyui],
+  plugins: [daisyui, require("@tailwindcss/container-queries")],
 } as Config;

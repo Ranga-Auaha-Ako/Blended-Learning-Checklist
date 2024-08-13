@@ -21,7 +21,7 @@
 </script>
 
 <button
-  class="btn btn-primary btn-{size}"
+  class="btn btn-primary btn-sm sm:btn-{size}"
   onclick={async () => {
     url = await exportStateUrl();
     modal?.showModal();

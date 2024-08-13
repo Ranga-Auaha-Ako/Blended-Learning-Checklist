@@ -25,7 +25,7 @@
 </script>
 
 <div
-  class="card-outer"
+  class="card-outer h-full"
   class:card-active={active}
   class:pointer-events-none={!active}
   out:fly={{ duration: 300, x: 50 }}
@@ -35,7 +35,7 @@
     <h2 class="card-title text-base">
       {title}
     </h2>
-    <p class="text-xs basis-0 shrink overflow-y-auto">
+    <p class="text-xs grow shrink overflow-y-auto">
       {body}
     </p>
     <div
@@ -56,7 +56,9 @@
 <style lang="postcss">
   .card-outer {
     @apply card overflow-clip border border-gray-300 bg-base-200 max-w-sm text-base-content max-h-screen transition max-w-xs;
-    aspect-ratio: 2/2.75;
+    @media screen and (min-width: 640px) {
+      /* aspect-ratio: 2/2.75; */
+    }
     &.card-active {
       @apply opacity-100;
     }

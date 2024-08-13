@@ -137,15 +137,15 @@
 
 <style lang="postcss">
   .row {
-    @apply grid grid-cols-12 gap-2 px-8 py-4;
+    @apply grid grid-cols-12 gap-2 px-4 @md:px-8 py-4 border-t @md:border-t-0;
     .idx {
-      @apply col-span-1 font-mono;
+      @apply col-span-2 @md:col-span-1 font-mono text-xs @md:text-base;
     }
     .name {
-      @apply col-span-10;
+      @apply col-span-12 order-2 @md:order-none @md:col-span-10 px-4 @md:px-0;
     }
     .rating {
-      @apply col-span-1;
+      @apply col-span-3 col-start-10 @md:col-start-auto @md:col-span-1 text-xs @md:text-base justify-self-end;
     }
   }
   .expanded {
