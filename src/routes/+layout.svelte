@@ -3,6 +3,8 @@
   import { page } from "$app/stores";
   import { onNavigate } from "$app/navigation";
   import { indexState } from "$lib/state.svelte";
+  import { browser } from "$app/environment";
+  import { importState, parseState } from "$lib/exportState";
 
   const destinationGradient = {
     quick: "gradient-quick" as const,
@@ -63,6 +65,17 @@
       );
     }
   });
+
+  // Handle loading state from URL UI
+  let importModal: HTMLDialogElement | undefined = $state();
+
+  $effect(() => {
+    const state =
+      window.location.hash && parseState(window.location.hash.slice(1));
+    if (importModal && state) {
+      importModal.showModal();
+    }
+  });
 </script>
 
 <div
@@ -77,6 +90,42 @@
 <div class="content-wrapper">
   <slot></slot>
 </div>
+
+<dialog bind:this={importModal} class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold mb-2">Shared Link</h3>
+    <p class="py-2">
+      It looks like you've opened a shared link to this tool. Would you like to
+      view the results?
+    </p>
+    <p class="font-bold text-red-700">
+      Caution: This will overwrite your current data. Make sure you have saved
+      your current progress before importing.
+    </p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button
+          class="btn btn-primary btn-success"
+          onclick={() => {
+            window.location.hash && importState(window.location.hash.slice(1));
+          }}
+        >
+          Import
+        </button>
+        <!-- if there is a button in form, it will close the modal -->
+        <button
+          class="btn"
+          onclick={() => {
+            window.location.hash = "";
+          }}>Close</button
+        >
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
 
 <style lang="postcss">
   ::view-transition-old(background),

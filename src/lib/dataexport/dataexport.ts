@@ -1,15 +1,19 @@
 // import { read as readXLSX, writeXLSX, utils } from "xlsx";
 import { Workbook } from "exceljs";
-import templateFile from "./template.xlsx?url";
 import { appState, ratingLabels } from "$lib/state.svelte";
 import checklist from "$lib/datasource/checklist";
 
 export async function exportData(mode: keyof typeof appState) {
-  // Fetch template from URL
-  const templateData = await fetch(templateFile);
-  const templateArrayBuffer = await templateData.arrayBuffer();
   const workbook = new Workbook();
-  await workbook.xlsx.load(templateArrayBuffer);
+  workbook.creator = "The University of Auckland";
+  workbook.created = new Date(2024, 8, 13);
+  workbook.modified = new Date();
+  const sheet = workbook.addWorksheet("Checklist", {
+    properties: {
+      outlineLevelRow: 1,
+      defaultColWidth: 20,
+    },
+  });
   // We have the template!
   // Now we can fill it with data
   let data: {
@@ -29,7 +33,10 @@ export async function exportData(mode: keyof typeof appState) {
           Standard: standard.name,
           Criteria: "",
           Indicator: "",
-          Rating: rated ? ratingLabels[rated] : "",
+          Rating:
+            rated !== undefined && ratingLabels[rated]
+              ? ratingLabels[rated]
+              : "",
           Notes: "",
         };
       });
@@ -69,17 +76,58 @@ export async function exportData(mode: keyof typeof appState) {
     default:
       break;
   }
-  const table = workbook.worksheets[0].getTable("Checklist");
-  data.forEach((row, index) => {
-    table.addRow([
+  const table = sheet.addTable({
+    name: "Checklist",
+    ref: "A1",
+    headerRow: true,
+    totalsRow: false,
+    style: {
+      theme: "TableStyleLight9",
+      showRowStripes: false,
+    },
+    columns: [
+      { name: "Standard", filterButton: true },
+      { name: "Criteria", filterButton: true },
+      { name: "Indicator", filterButton: true },
+      { name: "Rating", filterButton: true },
+      { name: "Notes", filterButton: true },
+    ],
+    rows: data.map((row) => [
       row.Standard,
       row.Criteria,
       row.Indicator,
       row.Rating,
       row.Notes,
-    ]);
+    ]),
   });
-  table.commit();
+  const nameCols = [1, 2, 3];
+  nameCols.forEach((i) => {
+    const col = sheet.getColumn(i);
+    col.width = 60;
+    col.alignment = { wrapText: true };
+  });
+  const ratingCol = sheet.getColumn(4);
+  ratingCol.width = 10;
+  ratingCol.eachCell((cell) => {
+    cell.dataValidation = {
+      type: "list",
+      allowBlank: true,
+      formulae: [`"${Object.values(ratingLabels).join(",")}"`],
+    };
+  });
+  switch (mode) {
+    case "quick":
+      sheet.getColumn(2).hidden = true;
+      sheet.getColumn(3).hidden = true;
+      break;
+    case "detailed":
+      sheet.getColumn(3).hidden = true;
+      break;
+    default:
+      break;
+  }
+  const notesColumn = sheet.getColumn(5);
+  notesColumn.width = 50;
   const buffer = await workbook.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -89,6 +137,4 @@ export async function exportData(mode: keyof typeof appState) {
   a.href = url;
   a.download = `export-${mode}.xlsx`;
   a.click();
-  debugger;
 }
-exportData("quick");

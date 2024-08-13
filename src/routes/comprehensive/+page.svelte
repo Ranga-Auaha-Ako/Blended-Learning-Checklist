@@ -196,7 +196,7 @@
             >
               Restart
             </button>
-            <ShareState size="sm"></ShareState>
+            <ShareState level="comprehensive" size="sm"></ShareState>
           </div>
           {#each checklist.standards[activeList].criteria as criterion, ic}
             <div class="collapse collapse-arrow bg-base-200">

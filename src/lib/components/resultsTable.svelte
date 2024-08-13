@@ -41,15 +41,7 @@
       );
     })
   );
-
-  async function exportTable() {
-    const { exportData } = await import("$lib/dataexport/dataexport");
-  }
 </script>
-
-<button class="btn btn-success btn-outline" onclick={exportTable}
-  >Export Data to Spreadsheet</button
->
 
 <div class="ratingTables">
   {#each splitByRating as items, i}

@@ -26,11 +26,9 @@ function compressedState() {
 
 export function exportState() {
   const state = KVIN.stringify(compressedState(), { tune: "size" });
-  console.log(compressedState(), state, btoa(state));
   const compressed = pako.deflate(state);
   const buffer = Buffer.from(compressed);
   const encoded = buffer.toString("base64url");
-  console.log(compressed, encoded);
   return encoded;
 }
 export async function exportStateUrl() {
@@ -39,7 +37,7 @@ export async function exportStateUrl() {
   return url.href;
 }
 
-export async function importState(base64: string) {
+export function parseState(base64: string) {
   try {
     const buffer = Buffer.from(base64, "base64url");
     const decompressed = pako.inflate(buffer, { to: "string" });
@@ -48,15 +46,32 @@ export async function importState(base64: string) {
     >;
 
     stateOrder.forEach(([state, vals], i) => {
-      appState[state].mode = newState[i].m;
+      // Validate mode
+      if (!(newState[i].m in routeMode)) throw new Error("Invalid mode");
+    });
+    return newState;
+  } catch (e) {
+    console.error("Failed to import state", e);
+  }
+}
+
+export function importState(state: string | ReturnType<typeof parseState>) {
+  try {
+    let parsed: ReturnType<typeof parseState>;
+    if (typeof state === "string") {
+      parsed = parseState(state);
+    } else {
+      parsed = state;
+    }
+    if (!parsed) throw new Error("Failed to parse state");
+
+    stateOrder.forEach(([state, vals], i) => {
+      appState[state].mode = parsed[i].m;
       vals.forEach((v, j) => {
-        appState[state].progress[v] = newState[i].p[j];
+        appState[state].progress[v] = parsed[i].p[j];
       });
     });
   } catch (e) {
     console.error("Failed to import state", e);
   }
-}
-if (browser && window.location.hash) {
-  importState(window.location.hash.slice(1));
 }

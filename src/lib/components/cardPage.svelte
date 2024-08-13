@@ -172,7 +172,7 @@
             >
               Start Over
             </button>
-            <ShareState />
+            <ShareState level={mode} />
           </div>
           <h2 class="font-bold text-4xl">You're Done!</h2>
           <p>
