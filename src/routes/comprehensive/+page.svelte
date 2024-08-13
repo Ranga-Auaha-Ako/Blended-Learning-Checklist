@@ -1,5 +1,6 @@
 <script lang="ts">
   import Checkbox from "$lib/components/checkbox.svelte";
+  import MobileNav from "$lib/components/mobileNav.svelte";
   import RatingButtons from "$lib/components/ratingButtons.svelte";
   import ResultsTable from "$lib/components/resultsTable.svelte";
   import ShareState from "$lib/components/shareState.svelte";
@@ -115,25 +116,56 @@
   });
 </script>
 
-<div class="heading text-white mx-20 my-10 flex flex-col">
-  <a href="/" class="btn btn-ghost text-xl -ml-3.5 w-auto mr-auto">
-    <MdiArrowBack></MdiArrowBack>
-    Return to menu
-  </a>
-  <h2 class="font-semibold text-5xl">Comprehensive Review</h2>
-  <p class="text-lg font-light mb-4">
+{#snippet sidebar()}
+<SidebarChecklist
+items={checklist.standards.map((standard, idx) => ({
+  text: standard.name,
+  state:
+    firstIncompleteStandardIndex === -1 ||
+    idx < firstIncompleteStandardIndex,
+}))}
+current={activeList}
+select={(idx) => {
+  appState.modes.comprehensive.mode = routeMode.active;
+  activeList = idx;
+  document.querySelector<HTMLDialogElement>("dialog#mobileNav")?.close();
+}}
+mask={false}
+rounded={false}
+autoScroll={false}
+></SidebarChecklist>
+
+{/snippet}
+
+<div class="heading text-white mx-10 sm:mx-20 my-4 sm:my-10 flex flex-col">
+  <div class="flex gap-2 md:contents w-full items-center justify-between">
+    <a
+      href="/"
+      class="btn btn-ghost sm:text-xl -ml-3.5 w-auto mr-auto"
+      title="Return to menu"
+    >
+      <MdiArrowBack></MdiArrowBack>
+      <span class="hidden md:inline" aria-hidden="true">Return to menu</span>
+    </a>
+    <h2
+      class="font-semibold leading-tight md:leading-normal sm:text-3xl md:text-5xl"
+    >
+      Comprehensive Review
+    </h2>
+  </div>
+  <p class="text-base md:text-lg hidden sm:block font-light text-gray-100">
     Review the full list of TELAS benchmark standards to ensure the highest
     possible quality course.
   </p>
   <div>
     <progress
-      class="progress w-full h-4 mb-2 [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:bg-white"
+      class="progress w-full h-2 sm:h-4 sm:mb-2 [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:bg-white"
       value={firstIncompleteIndicatorIndex === -1
         ? 100
         : (firstIncompleteIndicatorIndex / flatIndicators.length) * 100}
       max="100"
     ></progress>
-    <p class="text-lg font-light">
+    <p class="text-sm sm:text-lg font-light">
       {firstIncompleteIndicatorIndex === -1
         ? flatIndicators.length
         : firstIncompleteIndicatorIndex} / {flatIndicators.length} Completed
@@ -143,22 +175,7 @@
 
 <main>
   <div class="sidePane">
-    <SidebarChecklist
-      items={checklist.standards.map((standard, idx) => ({
-        text: standard.name,
-        state:
-          firstIncompleteStandardIndex === -1 ||
-          idx < firstIncompleteStandardIndex,
-      }))}
-      current={activeList}
-      select={(idx) => {
-        appState.modes.comprehensive.mode = routeMode.active;
-        activeList = idx;
-      }}
-      mask={false}
-      rounded={false}
-      autoScroll={false}
-    ></SidebarChecklist>
+    {@render sidebar()}
   </div>
 
   <div class="mainPane">
@@ -200,7 +217,7 @@
                 title="Please enter a year"
               />
             </fieldset>
-            <div class="flex flex-row gap-2 items-center">
+            <div class="flex flex-row gap-2 items-center flex-wrap">
               <div class="form-control shrink-0">
                 <label class="label cursor-pointer gap-2">
                   <span class="label-text">Auto-scroll to next item</span>
@@ -226,6 +243,7 @@
               </button>
               <ShareState level="comprehensive" size="sm"></ShareState>
             </div>
+            <MobileNav sidebar={sidebar} absolute={false} />
           </div>
           {#each checklist.standards[activeList].criteria as criterion, ic}
             <div class="collapse collapse-arrow bg-base-200">
@@ -315,7 +333,7 @@
       <h3 class="text-3xl font-semibold mb-4">
         Results
 
-        <div class="float-right flex gap-2 text-base font-normal">
+        <div class="sm:float-right flex gap-2 text-base font-normal">
           <button
             class="btn btn-sm btn-error btn-outline"
             onclick={() => {
@@ -339,12 +357,13 @@
   </div>
 </main>
 
+
 <style lang="postcss">
   main {
-    @apply rounded-box shadow-xl bg-base-100 h-full mx-20 grid grid-cols-4 overflow-hidden;
+    @apply rounded-box shadow-xl bg-base-100 h-full mx-3 sm:mx-20 grid grid-cols-4 overflow-hidden;
     view-transition-name: comprehensive;
     .sidePane {
-      @apply col-span-1 bg-base-300 border-r border-gray-300 dark:border-gray-800 pt-6 overflow-y-auto;
+      @apply hidden sm:block col-span-1 bg-base-300 border-r border-gray-300 dark:border-gray-800 pt-6 overflow-y-auto;
       :global(.checklist-item:hover) {
         @apply bg-base-200;
       }
@@ -353,7 +372,7 @@
       }
     }
     .mainPane {
-      @apply col-span-3 p-12 pl-6;
+      @apply col-span-4 sm:col-span-3 p-6 sm:p-12 sm:pl-6;
       container-type: inline-size;
       table {
         @apply h-fit overflow-clip;
