@@ -28,7 +28,7 @@ export async function exportData(mode: keyof typeof appState) {
   switch (mode) {
     case "quick":
       data = checklist.standards.map((standard) => {
-        const rated = appState.quick.progress[standard.name];
+        const rated = appState.modes.quick.progress[standard.name];
         return {
           Standard: standard.name,
           Criteria: "",
@@ -43,7 +43,7 @@ export async function exportData(mode: keyof typeof appState) {
       break;
     case "detailed":
       data = checklist.flatCriteria.map((criteria) => {
-        const rated = appState.detailed.progress[criteria.name];
+        const rated = appState.modes.detailed.progress[criteria.name];
         const standard = checklist.standards[criteria.standardIndex].name;
         const result = {
           Standard: standard !== lastStandard ? standard : "",
@@ -58,7 +58,7 @@ export async function exportData(mode: keyof typeof appState) {
       break;
     case "comprehensive":
       data = checklist.flatIndicators.map((indicators) => {
-        const rated = appState.comprehensive.progress[indicators.name];
+        const rated = appState.modes.comprehensive.progress[indicators.name];
         const standard = checklist.standards[indicators.standardIndex].name;
         const criteria = checklist.flatCriteria[indicators.criteriaIndex].name;
         const result = {

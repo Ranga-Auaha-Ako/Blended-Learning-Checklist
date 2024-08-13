@@ -4,14 +4,12 @@
   import MaterialSymbolsCheckCircleOutline from "virtual:icons/material-symbols/check-circle-outline";
   import MaterialSymbolsShareOutline from "virtual:icons/material-symbols/share-outline";
   import MaterialSymbolsExportNotesOutline from "virtual:icons/material-symbols/export-notes-outline";
-  import type { appState } from "$lib/state.svelte";
+  import type { appState, modes } from "$lib/state.svelte";
   let url: string | undefined = $state();
   let modal: HTMLDialogElement | undefined = $state();
   let showCopied = $state(false);
-  const {
-    size = "md",
-    level,
-  }: { size?: "sm" | "md" | "lg"; level: keyof typeof appState } = $props();
+  const { size = "md", level }: { size?: "sm" | "md" | "lg"; level: modes } =
+    $props();
 
   let exporting = $state(false);
   async function exportTable() {

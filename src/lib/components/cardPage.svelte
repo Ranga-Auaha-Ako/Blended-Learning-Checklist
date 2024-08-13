@@ -3,13 +3,18 @@
   import ResultsTable from "$lib/components/resultsTable.svelte";
   import SidebarChecklist from "$lib/components/sidebarChecklist.svelte";
   import checklist from "$lib/datasource/checklist";
-  import { appState, ratingList, routeMode } from "$lib/state.svelte";
+  import {
+    appState,
+    ratingList,
+    routeMode,
+    type modes,
+  } from "$lib/state.svelte";
   import { fade, fly } from "svelte/transition";
   import MdiArrowBack from "virtual:icons/mdi/arrowBack";
   import ShareState from "./shareState.svelte";
 
   interface cardProps {
-    mode: keyof typeof appState;
+    mode: modes;
     current?: number;
     text: {
       title: string;
@@ -43,13 +48,13 @@
 
   let hideRated = $state(true);
 
-  let progress = $derived(Object.keys(appState[mode].progress).length);
+  let progress = $derived(Object.keys(appState.modes[mode].progress).length);
 
   let currentItem = $derived(flatChecklist[current]);
 
   $effect(() => {
     if (progress === flatChecklist.length) {
-      appState[mode].mode = routeMode.complete;
+      appState.modes[mode].mode = routeMode.complete;
     }
   });
 </script>
@@ -68,7 +73,7 @@
       </p>
       <SidebarChecklist
         items={flatChecklist.map((s, idx) => ({
-          state: appState[mode].progress[s.name] !== undefined,
+          state: appState.modes[mode].progress[s.name] !== undefined,
           text:
             s.mode === "quick"
               ? s.name
@@ -77,11 +82,13 @@
                 : `${s.standardIndex + 1}.${s.criteriaIndex + 1}.${s.indicatorIndex + 1} ${s.name}`,
         }))}
         select={(idx) => {
-          appState[mode].mode = routeMode.active;
+          appState.modes[mode].mode = routeMode.active;
           current = idx;
           hideRated = false;
         }}
-        current={appState[mode].mode === routeMode.active ? current : undefined}
+        current={appState.modes[mode].mode === routeMode.active
+          ? current
+          : undefined}
       ></SidebarChecklist>
     </div>
   </div>
@@ -91,7 +98,7 @@
       class="rounded-box shadow-xl bg-base-100 w-full h-full py-8 px-8"
       style:--mode={mode}
     >
-      {#if appState[mode].mode === routeMode.intro}
+      {#if appState.modes[mode].mode === routeMode.intro}
         <div out:fade>
           <h2 class="font-bold text-4xl">Introduction</h2>
           <p class="text-lg">
@@ -101,14 +108,14 @@
           <button
             class="btn btn-outline btn-primary mt-8 block mx-auto"
             onclick={() => {
-              appState[mode].mode = routeMode.active;
+              appState.modes[mode].mode = routeMode.active;
               current = 0;
             }}
           >
             Get Started
           </button>
         </div>
-      {:else if appState[mode].mode === routeMode.active}
+      {:else if appState.modes[mode].mode === routeMode.active}
         <div in:fly={{ delay: 150, y: 50 }} class="flex flex-col h-full">
           <div class="grid auto-rows-auto grid-cols-1 gap-0">
             {#if currentItem.mode !== "quick"}
@@ -132,12 +139,12 @@
               cards={flatChecklist.map((s) => ({
                 title: s.name,
                 body: s.description || "",
-                rating: appState[mode].progress[s.name],
+                rating: appState.modes[mode].progress[s.name],
               }))}
               {hideRated}
               bind:current
               rate={(idx, rating) => {
-                appState[mode].progress[flatChecklist[idx].name] = rating;
+                appState.modes[mode].progress[flatChecklist[idx].name] = rating;
               }}
               binaryMode={mode === "quick"}
             />
@@ -154,7 +161,7 @@
             </p>
           </div>
         </div>
-      {:else if appState[mode].mode === routeMode.complete}
+      {:else if appState.modes[mode].mode === routeMode.complete}
         <div out:fade>
           <div class="buttonStack float-right flex gap-2">
             <button
@@ -166,8 +173,8 @@
                   )
                 )
                   return;
-                appState[mode].mode = routeMode.intro;
-                appState[mode].progress = {};
+                appState.modes[mode].mode = routeMode.intro;
+                appState.modes[mode].progress = {};
               }}
             >
               Start Over

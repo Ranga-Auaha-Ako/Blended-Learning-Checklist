@@ -10,12 +10,13 @@
     quickCalculatedAvg,
     rating,
     ratingLabels,
+    type modes,
   } from "$lib/state.svelte";
   import { slide } from "svelte/transition";
   interface rowProps {
     idx?: number;
     item: checklistItem;
-    level: keyof typeof appState;
+    level: modes;
     hideIndex?: boolean;
   }
   import MaterialSymbolsStarRateOutlineRounded from "virtual:icons/material-symbols/star-rate-outline-rounded";
@@ -23,19 +24,21 @@
   import MaterialSymbolsStarRateRounded from "virtual:icons/material-symbols/star-rate-rounded";
   let { idx, item, level, hideIndex }: rowProps = $props();
 
-  const shouldShowLevel = (rowLevel: keyof typeof appState) => {
+  const shouldShowLevel = (rowLevel: modes) => {
     const levels = ["quick", "detailed", "comprehensive"] as const;
     return levels.indexOf(rowLevel) < levels.indexOf(level);
   };
 
   const itemLevel = (item: checklistItem) => {
-    return levelItemMapReverse[item.type] as keyof typeof appState;
+    return levelItemMapReverse[item.type] as modes;
   };
 
   const rowLevel = levelItemMapReverse[item.type];
 
   let currentRating =
-    rowLevel === level ? appState[rowLevel].progress[item.name] : undefined;
+    rowLevel === level
+      ? appState.modes[rowLevel].progress[item.name]
+      : undefined;
   // Use calculated fields for anything above "level"
   let shouldCalculate = false;
   switch (level) {

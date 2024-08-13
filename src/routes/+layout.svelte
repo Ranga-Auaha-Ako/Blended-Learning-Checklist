@@ -69,10 +69,12 @@
   // Handle loading state from URL UI
   let importModal: HTMLDialogElement | undefined = $state();
 
+  let parsedState: ReturnType<typeof parseState> | undefined = $state();
   $effect(() => {
-    const state =
-      window.location.hash && parseState(window.location.hash.slice(1));
-    if (importModal && state) {
+    parsedState = window.location.hash
+      ? parseState(window.location.hash.slice(1))
+      : undefined;
+    if (importModal && parsedState) {
       importModal.showModal();
     }
   });
@@ -94,11 +96,30 @@
 <dialog bind:this={importModal} class="modal">
   <div class="modal-box">
     <h3 class="text-lg font-bold mb-2">Shared Link</h3>
-    <p class="py-2">
+    <p class="pt-2">
       It looks like you've opened a shared link to this tool. Would you like to
       view the results?
     </p>
-    <p class="font-bold text-red-700">
+    <!-- Meta details table -->
+    {#if parsedState}
+      <table class="table table-compact">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Semester</th>
+            <th>Year</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{parsedState.m[0]}</td>
+            <td>{parsedState.m[1]}</td>
+            <td>{parsedState.m[2]}</td>
+          </tr>
+        </tbody>
+      </table>
+    {/if}
+    <p class="pt-3 font-bold text-red-700">
       Caution: This will overwrite your current data. Make sure you have saved
       your current progress before importing.
     </p>

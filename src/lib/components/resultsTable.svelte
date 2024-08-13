@@ -4,6 +4,7 @@
     quickCalculatedAvg,
     rating,
     ratingList,
+    type modes,
   } from "$lib/state.svelte";
   import checklist, {
     type checklistItem,
@@ -12,7 +13,7 @@
   import ResultsRow from "./resultsRow.svelte";
 
   interface resultsTableProps {
-    level: keyof typeof appState;
+    level: modes;
   }
 
   let { level }: resultsTableProps = $props();
@@ -20,7 +21,6 @@
   let calcAvg = $derived.by(
     quickCalculatedAvg.bind(undefined, level === "quick")
   );
-  $inspect(calcAvg);
 
   const sortedStandards = $derived(
     checklist.standards

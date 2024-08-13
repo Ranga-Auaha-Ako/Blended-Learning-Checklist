@@ -35,35 +35,50 @@ interface routeState {
 }
 
 const defaultAppState: {
-  comprehensive: routeState;
-  detailed: routeState;
-  quick: routeState;
+  meta: {
+    title?: string;
+    semester?: string;
+    year?: string;
+  };
+  modes: {
+    comprehensive: routeState;
+    detailed: routeState;
+    quick: routeState;
+  };
 } = {
-  comprehensive: {
-    progress: {} as routeProgress,
-    mode: routeMode.active,
-  },
-  detailed: {
-    progress: {} as routeProgress,
-    mode: routeMode.intro,
-  },
-  quick: {
-    progress: {} as routeProgress,
-    mode: routeMode.intro,
+  meta: {},
+  modes: {
+    comprehensive: {
+      progress: {} as routeProgress,
+      mode: routeMode.active,
+    },
+    detailed: {
+      progress: {} as routeProgress,
+      mode: routeMode.intro,
+    },
+    quick: {
+      progress: {} as routeProgress,
+      mode: routeMode.intro,
+    },
   },
 };
 
 let appState = $state(defaultAppState);
+
+export type modes = keyof typeof appState.modes;
+
 $effect.root(() => {
   try {
     const newAppState = JSON.parse(
       sessionStorage.getItem("blended-checklist") || ""
     );
     if (newAppState) {
-      appState.comprehensive =
-        newAppState.comprehensive || appState.comprehensive;
-      appState.detailed = newAppState.detailed || appState.detailed;
-      appState.quick = newAppState.quick || appState.quick;
+      appState.meta = newAppState.meta || appState.meta;
+      appState.modes.comprehensive =
+        newAppState.modes.comprehensive || appState.modes.comprehensive;
+      appState.modes.detailed =
+        newAppState.modes.detailed || appState.modes.detailed;
+      appState.modes.quick = newAppState.modes.quick || appState.modes.quick;
     }
   } catch (e) {
     console.error("Failed to parse stored state", e);
@@ -102,11 +117,11 @@ const calculateAverage = (
 };
 // Detailed
 export const detailedCalculatedAvg = (useExisting = false) => {
-  const originRatings = Object.entries(appState.comprehensive.progress).map(
-    ([key, value]) => {
-      return [key, { calculated: false, rating: value }];
-    }
-  );
+  const originRatings = Object.entries(
+    appState.modes.comprehensive.progress
+  ).map(([key, value]) => {
+    return [key, { calculated: false, rating: value }];
+  });
   const items = checklist.standards.flatMap((standard) => {
     return standard.criteria.map((c) => ({
       name: c.name,
@@ -114,7 +129,7 @@ export const detailedCalculatedAvg = (useExisting = false) => {
     }));
   });
   return calculateAverage(
-    useExisting ? appState.detailed.progress : {},
+    useExisting ? appState.modes.detailed.progress : {},
     Object.fromEntries(originRatings),
     items
   );
@@ -126,14 +141,14 @@ export const quickCalculatedAvg = (useExisting = false) => {
     subItems: s.criteria,
   }));
   return calculateAverage(
-    useExisting ? appState.quick.progress : {},
+    useExisting ? appState.modes.quick.progress : {},
     detailedCalculatedAvg(),
     items
   );
 };
 
 export let indexState: {
-  mode: keyof typeof appState | "reset";
+  mode: modes | "reset";
 } = $state({
   mode: "reset",
 });

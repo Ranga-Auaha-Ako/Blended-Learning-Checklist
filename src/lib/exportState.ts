@@ -1,4 +1,4 @@
-import { appState, rating, routeMode } from "./state.svelte";
+import { appState, rating, routeMode, type modes } from "./state.svelte";
 import checklist from "./datasource/checklist";
 import { KVIN as baseKVIN } from "kvin";
 import pako from "pako";
@@ -9,19 +9,24 @@ import { Buffer } from "buffer";
 const KVIN = new baseKVIN();
 KVIN.tune = "size";
 
-const stateOrder: [keyof typeof appState, string[]][] = [
+const stateOrder: [modes, string[]][] = [
   ["quick", checklist.standards.map((s) => s.name)],
   ["detailed", checklist.flatCriteria.map((c) => c.name)],
   ["comprehensive", checklist.flatIndicators.map((i) => i.name)],
 ];
 
 function compressedState() {
-  return stateOrder.map(([state, vals]) => {
-    return {
-      m: appState[state].mode as routeMode,
-      p: vals.map<rating | undefined>((v) => appState[state].progress[v]),
-    };
-  });
+  return {
+    m: [appState.meta.title, appState.meta.semester, appState.meta.year],
+    d: stateOrder.map(([state, vals]) => {
+      return {
+        m: appState.modes[state].mode as routeMode,
+        p: vals.map<rating | undefined>(
+          (v) => appState.modes[state].progress[v]
+        ),
+      };
+    }),
+  };
 }
 
 export function exportState() {
@@ -47,7 +52,7 @@ export function parseState(base64: string) {
 
     stateOrder.forEach(([state, vals], i) => {
       // Validate mode
-      if (!(newState[i].m in routeMode)) throw new Error("Invalid mode");
+      if (!(newState.d[i].m in routeMode)) throw new Error("Invalid mode");
     });
     return newState;
   } catch (e) {
@@ -66,11 +71,14 @@ export function importState(state: string | ReturnType<typeof parseState>) {
     if (!parsed) throw new Error("Failed to parse state");
 
     stateOrder.forEach(([state, vals], i) => {
-      appState[state].mode = parsed[i].m;
+      appState.modes[state].mode = parsed.d[i].m;
       vals.forEach((v, j) => {
-        appState[state].progress[v] = parsed[i].p[j];
+        appState.modes[state].progress[v] = parsed.d[i].p[j];
       });
     });
+    appState.meta.title = parsed.m[0];
+    appState.meta.semester = parsed.m[1];
+    appState.meta.year = parsed.m[2];
   } catch (e) {
     console.error("Failed to import state", e);
   }

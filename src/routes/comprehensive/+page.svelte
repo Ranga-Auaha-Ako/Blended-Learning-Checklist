@@ -20,7 +20,7 @@
   let firstIncompleteIndicator = $derived(
     flatIndicators.find(
       (indicator) =>
-        appState.comprehensive.progress[indicator.name] === undefined
+        appState.modes.comprehensive.progress[indicator.name] === undefined
     )
   );
   let firstIncompleteIndicatorIndex = $derived(
@@ -34,7 +34,7 @@
       .find((criterion) =>
         criterion.indicators.some(
           (indicator) =>
-            appState.comprehensive.progress[indicator.name] === undefined
+            appState.modes.comprehensive.progress[indicator.name] === undefined
         )
       )
   );
@@ -43,7 +43,7 @@
       standard.criteria.some((criterion) =>
         criterion.indicators.some(
           (indicator) =>
-            appState.comprehensive.progress[indicator.name] === undefined
+            appState.modes.comprehensive.progress[indicator.name] === undefined
         )
       )
     )
@@ -110,7 +110,7 @@
 
   $effect(() => {
     if (!firstIncompleteIndicator) {
-      appState.comprehensive.mode = routeMode.complete;
+      appState.modes.comprehensive.mode = routeMode.complete;
     }
   });
 </script>
@@ -152,7 +152,7 @@
       }))}
       current={activeList}
       select={(idx) => {
-        appState.comprehensive.mode = routeMode.active;
+        appState.modes.comprehensive.mode = routeMode.active;
         activeList = idx;
       }}
       mask={false}
@@ -162,7 +162,7 @@
   </div>
 
   <div class="mainPane">
-    {#if appState.comprehensive.mode === routeMode.active}
+    {#if appState.modes.comprehensive.mode === routeMode.active}
       {#key activeList}
         <div
           class="overflow-x-auto"
@@ -189,8 +189,8 @@
                 confirm("Are you sure you want to restart?") &&
                   (() => {
                     activeList = 0;
-                    appState.comprehensive.progress = {};
-                    appState.comprehensive.mode = routeMode.active;
+                    appState.modes.comprehensive.progress = {};
+                    appState.modes.comprehensive.mode = routeMode.active;
                   })();
               }}
             >
@@ -214,7 +214,7 @@
                   class="progress w-20 [&::-webkit-progress-value]:transition-all my-2.5"
                   value={(criterion.indicators.reduce(
                     (acc, indicator) =>
-                      appState.comprehensive.progress[indicator.name] !==
+                      appState.modes.comprehensive.progress[indicator.name] !==
                       undefined
                         ? acc + 1
                         : acc,
@@ -237,7 +237,7 @@
                   <tbody>
                     {#each criterion.indicators as indicator}
                       {@const itemRating =
-                        appState.comprehensive.progress[indicator.name]}
+                        appState.modes.comprehensive.progress[indicator.name]}
                       <tr
                         class="h-px"
                         class:red={itemRating == rating.no}
@@ -253,8 +253,9 @@
                           <RatingButtons
                             canUnselect={true}
                             rate={(rating) => {
-                              appState.comprehensive.progress[indicator.name] =
-                                rating;
+                              appState.modes.comprehensive.progress[
+                                indicator.name
+                              ] = rating;
                               // Select the next indicator
                               const idx =
                                 criterion.indicators.indexOf(indicator);
@@ -267,9 +268,8 @@
                               }
                             }}
                             binaryMode={false}
-                            currentRating={appState.comprehensive.progress[
-                              indicator.name
-                            ]}
+                            currentRating={appState.modes.comprehensive
+                              .progress[indicator.name]}
                           ></RatingButtons>
                         </td>
                       </tr>
@@ -293,8 +293,8 @@
               confirm("Are you sure you want to restart?") &&
                 (() => {
                   activeList = 0;
-                  appState.comprehensive.progress = {};
-                  appState.comprehensive.mode = routeMode.active;
+                  appState.modes.comprehensive.progress = {};
+                  appState.modes.comprehensive.mode = routeMode.active;
                 })();
             }}
           >
