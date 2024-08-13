@@ -189,8 +189,8 @@ current={appState.modes[mode].mode === routeMode.active
                   confirm("Are you sure you want to restart?") &&
                     (() => {
                       current = 0;
-                      appState.modes.quick.progress = {};
-                      appState.modes.quick.mode = routeMode.intro;
+                      appState.modes[mode].progress = {};
+                      appState.modes[mode].mode = routeMode.intro;
                     })();
                 }}
               >
