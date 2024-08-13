@@ -156,6 +156,7 @@
         activeList = idx;
       }}
       mask={false}
+      rounded={false}
       autoScroll={false}
     ></SidebarChecklist>
   </div>

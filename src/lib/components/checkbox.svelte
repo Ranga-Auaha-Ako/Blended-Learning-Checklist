@@ -10,18 +10,22 @@
   }: { checked: boolean; style?: "box" | "simple" } = $props();
 </script>
 
-<span class="inline-grid grid-cols-1 grid-rows-1">
+<span class="inline-grid grid-cols-1 grid-rows-1 w-6 h-6">
   {#if checked}
     <span class="col-start-1 row-start-1" transition:fade>
       {#if style === "box"}
-        <MDICheckBox class="inline" />
+        <MDICheckBox class="inline w-6 h-6" width="auto" height="auto" />
       {:else}
-        <MDICheck class="inline" />
+        <MDICheck class="inline w-6 h-6" width="auto" height="auto" />
       {/if}
     </span>
   {:else}
     <span class="col-start-1 row-start-1" transition:fade>
-      <MDICheckBoxOutlineBlank class="inline" />
+      <MDICheckBoxOutlineBlank
+        class="inline w-6 h-6"
+        width="auto"
+        height="auto"
+      />
     </span>
   {/if}
 </span>
