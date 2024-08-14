@@ -13,6 +13,7 @@
   import MdiArrowBack from "virtual:icons/mdi/arrowBack";
   import ShareState from "./shareState.svelte";
   import MobileNav from "./mobileNav.svelte";
+  import { base } from "$app/paths";
 
   interface cardProps {
     mode: modes;
@@ -93,7 +94,7 @@ current={appState.modes[mode].mode === routeMode.active
     >
       <div class="flex gap-2 md:contents w-full items-center justify-between">
         <a
-          href="/"
+          href="{base}/"
           class="btn btn-ghost sm:text-xl -ml-3.5 w-auto mr-auto"
           title="Return to menu"
         >

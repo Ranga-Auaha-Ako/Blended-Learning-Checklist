@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import { appState, indexState, type modes } from "$lib/state.svelte";
+  import { base } from "$app/paths";
   import MdiSchedule from "virtual:icons/mdi/schedule";
 
   const appModeData: {
@@ -15,7 +16,7 @@
       description:
         "Quickly check your assumptions against an overview of what is expected for learning at the University of Auckland.",
       id: "quick",
-      link: "/quick",
+      link: `${base}/quick`,
       time: 5,
     },
     {
@@ -23,7 +24,7 @@
       description:
         "Dive into the parts of the benchmark you think you need to look at most closely, without getting stuck in the weeds.",
       id: "detailed",
-      link: "/detailed",
+      link: `${base}/detailed`,
       time: 15,
     },
     {
@@ -31,7 +32,7 @@
       description:
         "Take a deep look at your course, checking against each standard to ensure everything is ready for students to learn.",
       id: "comprehensive",
-      link: "/comprehensive",
+      link: `${base}/comprehensive`,
       time: 30,
     },
   ];

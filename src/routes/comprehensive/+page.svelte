@@ -7,6 +7,7 @@
   import SidebarChecklist from "$lib/components/sidebarChecklist.svelte";
   import checklist from "$lib/datasource/checklist";
   import { appState, rating, routeMode } from "$lib/state.svelte";
+  import { base } from "$app/paths";
   import { tick } from "svelte";
   import { fade } from "svelte/transition";
   let activeList = $state(0);
@@ -140,7 +141,7 @@ autoScroll={false}
 <div class="heading text-white mx-10 md:mx-20 my-4 md:my-10 flex flex-col">
   <div class="flex gap-2 md:contents w-full items-center justify-between">
     <a
-      href="/"
+      href="{base}/"
       class="btn btn-ghost sm:text-xl -ml-3.5 w-auto mr-auto"
       title="Return to menu"
     >
